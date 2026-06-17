@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAIXPO 2026 — AI Marketing Conference & Expo | KL + Dubai</title>
+<meta name="description" content="MAIXPO 2026 is Southeast Asia and the GCC's AI marketing conference and expo. Two-city series: Kuala Lumpur, September 2026 and Dubai, November 2026.">
+<meta property="og:title" content="MAIXPO 2026 — AI Marketing Conference & Expo">
+<meta property="og:description" content="Two cities. Two days each. Kuala Lumpur, September 2026. Dubai, November 2026. Where marketing leaders come to lead the AI revolution.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #080808;
+    --white: #F5F2EC;
+    --accent: #E8FF00;
+    --accent2: #FF4D00;
+    --mid: #1A1A1A;
+    --border: rgba(245,242,236,0.12);
+    --text-muted: rgba(245,242,236,0.5);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* HERO IMAGE */
+  .hero-img {
+    position: absolute; inset: 0; z-index: 0;
+    background: url('img/maiexpo25.png') center 30% / cover no-repeat;
+  }
+  .hero-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(8,8,8,0.85) 60%, rgba(8,8,8,0.97) 100%);
+  }
+
+  /* GALLERY STRIP */
+  .gallery-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    overflow: hidden;
+  }
+  .gallery-strip img {
+    width: 100%; height: 280px;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(20%) brightness(0.85);
+    transition: filter 0.4s;
+  }
+  .gallery-strip img:hover { filter: grayscale(0%) brightness(1); }
+  .gallery-strip .gallery-wide { grid-column: span 2; }
+  .gallery-strip .gallery-wide img { height: 280px; }
+
+  /* EXPO PHOTO */
+  .expo-photo {
+    width: 100%; height: 340px;
+    object-fit: cover;
+    display: block;
+    margin-top: 48px;
+    filter: brightness(0.8);
+  }
+
+  /* VENUE PHOTO */
+  .venue-photo {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    min-height: 300px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(8,8,8,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; letter-spacing: 3px;
+    color: var(--white); text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 13px; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-cta {
+    background: var(--accent) !important; color: var(--black) !important;
+    padding: 10px 22px; font-weight: 500 !important; letter-spacing: 0.5px !important;
+    text-transform: uppercase !important; font-size: 12px !important;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 40px 80px; position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 30%, rgba(232,255,0,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 20% 80%, rgba(255,77,0,0.05) 0%, transparent 50%),
+      linear-gradient(180deg, rgba(8,8,8,0) 0%, rgba(8,8,8,0.8) 70%);
+    z-index: 0;
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(245,242,236,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,242,236,0.03) 1px, transparent 1px);
+    background-size: 60px 60px; z-index: 0;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(232,255,0,0.1); border: 1px solid rgba(232,255,0,0.3);
+    color: var(--accent); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 14px; margin-bottom: 32px; width: fit-content;
+    position: relative; z-index: 1; animation: fadeUp 0.8s ease both;
+  }
+  .hero-tag::before {
+    content: ''; width: 6px; height: 6px; background: var(--accent);
+    border-radius: 50%; animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 14vw, 200px); line-height: 0.9; letter-spacing: 4px;
+    position: relative; z-index: 1; animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-title .accent { color: var(--accent); }
+  .hero-title .outline { -webkit-text-stroke: 1px var(--white); color: transparent; }
+  .hero-sub {
+    font-family: 'Syne', sans-serif; font-size: clamp(16px, 2.5vw, 26px); font-weight: 400;
+    color: var(--text-muted); margin: 20px 0 40px;
+    position: relative; z-index: 1; max-width: 700px; animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .hero-sub strong { color: var(--white); font-weight: 600; }
+  .hero-meta {
+    display: flex; gap: 40px; align-items: center; flex-wrap: wrap;
+    position: relative; z-index: 1; animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-date { display: flex; flex-direction: column; }
+  .hero-date-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  .hero-date-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; color: var(--white); }
+  .hero-date-val.coming { color: var(--text-muted); font-size: 16px; }
+  .hero-divider { width: 1px; height: 40px; background: var(--border); }
+  .hero-cta-group { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    background: var(--accent); color: var(--black);
+    padding: 16px 36px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; text-decoration: none;
+    display: inline-block; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(232,255,0,0.25); }
+  .btn-secondary {
+    color: var(--white); padding: 16px 36px; font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    text-decoration: none; border: 1px solid var(--border); transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--white); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* TICKER */
+  .ticker { background: var(--accent); color: var(--black); padding: 12px 0; overflow: hidden; white-space: nowrap; }
+  .ticker-inner { display: inline-flex; gap: 0; animation: ticker 35s linear infinite; }
+  .ticker-item { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 3px; padding: 0 40px; display: flex; align-items: center; gap: 20px; }
+  .ticker-dot { width: 6px; height: 6px; background: var(--black); border-radius: 50%; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* SECTIONS COMMON */
+  section { padding: 100px 40px; }
+  .section-label {
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--accent); }
+  .section-title { font-family: 'Syne', sans-serif; font-size: clamp(32px, 5vw, 60px); font-weight: 800; line-height: 1.1; max-width: 800px; }
+  .section-title .accent { color: var(--accent); }
+
+  /* CITIES */
+  .cities { border-top: 1px solid var(--border); background: var(--mid); }
+  .cities-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 60px; }
+  .city-card { background: var(--black); padding: 48px 44px; position: relative; overflow: hidden; }
+  .city-card.active { border-top: 3px solid var(--accent); }
+  .city-card.coming-soon { border-top: 3px solid rgba(245,242,236,0.2); }
+  .city-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 120px; letter-spacing: 2px;
+    color: rgba(232,255,0,0.04); position: absolute; top: -10px; right: 24px; line-height: 1;
+  }
+  .city-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 10px; margin-bottom: 24px;
+  }
+  .city-status.open { background: rgba(232,255,0,0.12); color: var(--accent); }
+  .city-status.tba { background: rgba(245,242,236,0.06); color: var(--text-muted); }
+  .city-status::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .city-name { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 3px; line-height: 1; margin-bottom: 6px; }
+  .city-country { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .city-date { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .city-date-note { font-size: 12px; color: var(--text-muted); margin-bottom: 28px; }
+  .city-desc { font-size: 14px; line-height: 1.7; color: var(--text-muted); margin-bottom: 32px; }
+  .city-facts { display: flex; gap: 32px; flex-wrap: wrap; }
+  .city-fact-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  .city-fact-val { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; }
+
+  /* ABOUT */
+  .about { border-top: 1px solid var(--border); }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; align-items: start; }
+  .about-text p { font-size: 17px; line-height: 1.8; color: rgba(245,242,236,0.75); margin-bottom: 20px; }
+  .about-text p strong { color: var(--white); font-weight: 500; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .stat { background: var(--mid); padding: 32px 28px; position: relative; overflow: hidden; }
+  .stat::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; color: var(--accent); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; }
+
+  /* WHY */
+  .why { background: var(--mid); border-top: 1px solid var(--border); }
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+  .why-card { background: var(--black); padding: 40px 36px; position: relative; transition: background 0.3s; }
+  .why-card:hover { background: #111; }
+  .why-num { font-family: 'Bebas Neue', sans-serif; font-size: 64px; color: rgba(232,255,0,0.12); line-height: 1; margin-bottom: 16px; }
+  .why-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .why-text { font-size: 15px; line-height: 1.7; color: var(--text-muted); }
+
+  /* AGENDA */
+  .agenda { border-top: 1px solid var(--border); }
+  .agenda-city-label {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(232,255,0,0.08); border: 1px solid rgba(232,255,0,0.2);
+    color: var(--accent); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 12px; margin-bottom: 32px;
+  }
+  .agenda-days { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 60px; }
+  .agenda-day-title {
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .agenda-item { display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border); }
+  .agenda-time { font-size: 12px; color: var(--text-muted); min-width: 70px; padding-top: 2px; letter-spacing: 0.5px; }
+  .agenda-content-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .agenda-content-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .agenda-tag { display: inline-block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; margin-top: 8px; }
+  .tag-keynote { background: rgba(232,255,0,0.15); color: var(--accent); }
+  .tag-panel { background: rgba(255,77,0,0.15); color: var(--accent2); }
+  .tag-workshop { background: rgba(245,242,236,0.08); color: var(--text-muted); }
+  .tag-networking { background: rgba(100,200,255,0.1); color: #64C8FF; }
+  .agenda-dubai-note {
+    margin-top: 48px; padding: 32px 36px;
+    background: rgba(245,242,236,0.03); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 24px;
+  }
+  .agenda-dubai-icon { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; color: var(--text-muted); white-space: nowrap; }
+  .agenda-dubai-text { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+  .agenda-dubai-text strong { color: var(--white); }
+
+  /* SPEAKERS */
+  .speakers { background: var(--mid); border-top: 1px solid var(--border); }
+  .speakers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+  .speaker-card { background: var(--black); padding: 32px 28px; position: relative; overflow: hidden; transition: transform 0.3s; }
+  .speaker-card:hover { transform: translateY(-4px); }
+  .speaker-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #333, #555); margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--accent);
+    border: 2px solid var(--border);
+  }
+  .speaker-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .speaker-title { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+  .speaker-company { font-size: 12px; color: var(--accent); margin-top: 8px; font-weight: 500; }
+  .speaker-tba { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 1px; color: var(--text-muted); text-transform: uppercase; margin-top: 12px; }
+  .speakers-note {
+    margin-top: 40px; padding: 24px 32px;
+    background: rgba(232,255,0,0.05); border: 1px solid rgba(232,255,0,0.15);
+    font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 16px;
+  }
+  .speakers-note strong { color: var(--accent); }
+  .speakers-note a { color: var(--accent); }
+
+  /* TICKETS */
+  .tickets { border-top: 1px solid var(--border); }
+  .tickets-city-toggle { display: flex; gap: 2px; margin-top: 48px; margin-bottom: 0; }
+  .toggle-btn {
+    padding: 14px 28px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    background: var(--mid); color: var(--text-muted); border: none; transition: all 0.2s;
+  }
+  .toggle-btn.active { background: var(--accent); color: var(--black); }
+  .tickets-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 2px; }
+  .ticket-card { background: var(--mid); padding: 40px 36px; position: relative; overflow: hidden; }
+  .ticket-card.featured { background: var(--accent); color: var(--black); }
+  .ticket-badge { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; background: rgba(232,255,0,0.15); color: var(--accent); display: inline-block; margin-bottom: 24px; }
+  .ticket-card.featured .ticket-badge { background: rgba(0,0,0,0.15); color: var(--black); }
+  .ticket-type { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+  .ticket-price { font-family: 'Bebas Neue', sans-serif; font-size: 72px; letter-spacing: 2px; line-height: 1; margin: 16px 0; }
+  .ticket-price sup { font-size: 32px; vertical-align: top; margin-top: 16px; display: inline-block; }
+  .ticket-price .regular { font-size: 24px; font-family: 'DM Sans', sans-serif; font-weight: 300; text-decoration: line-through; opacity: 0.4; margin-left: 8px; }
+  .ticket-rm { font-size: 13px; opacity: 0.6; margin-bottom: 24px; }
+  .ticket-features { list-style: none; margin-bottom: 32px; }
+  .ticket-features li { font-size: 14px; padding: 10px 0; border-bottom: 1px solid rgba(245,242,236,0.08); display: flex; align-items: center; gap: 10px; line-height: 1.4; }
+  .ticket-card.featured .ticket-features li { border-bottom-color: rgba(0,0,0,0.1); }
+  .tick { color: var(--accent); font-size: 16px; }
+  .ticket-card.featured .tick { color: var(--black); }
+  .ticket-limit { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--accent2); margin-bottom: 24px; display: flex; align-items: center; gap: 6px; }
+  .ticket-card.featured .ticket-limit { color: rgba(0,0,0,0.6); }
+  .ticket-btn {
+    display: block; text-align: center; padding: 14px;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; text-decoration: none; transition: all 0.2s;
+  }
+  .ticket-btn-dark { background: var(--accent); color: var(--black); }
+  .ticket-btn-dark:hover { opacity: 0.9; }
+  .ticket-btn-outline { border: 1px solid var(--black); color: var(--black); }
+  .ticket-btn-outline:hover { background: rgba(0,0,0,0.1); }
+  .ticket-btn-white { border: 1px solid var(--border); color: var(--white); }
+  .ticket-btn-white:hover { border-color: var(--white); }
+  .ticket-dubai-coming {
+    grid-column: 1 / -1; padding: 60px 40px; text-align: center;
+    background: var(--mid); border: 1px dashed rgba(245,242,236,0.15);
+  }
+  .ticket-dubai-coming h3 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 3px; color: var(--text-muted); margin-bottom: 12px; }
+  .ticket-dubai-coming p { font-size: 15px; color: var(--text-muted); }
+
+  /* EXHIBITORS */
+  .exhibitors { background: var(--mid); border-top: 1px solid var(--border); }
+  .exhibitors-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; }
+  .booth-card { background: var(--black); padding: 36px 32px; }
+  .booth-icon { font-size: 32px; margin-bottom: 20px; }
+  .booth-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .booth-price { font-family: 'Bebas Neue', sans-serif; font-size: 40px; color: var(--accent); letter-spacing: 2px; margin: 12px 0; }
+  .booth-features { list-style: none; margin: 16px 0 28px; }
+  .booth-features li { font-size: 13px; color: var(--text-muted); padding: 6px 0; display: flex; align-items: flex-start; gap: 8px; }
+  .booth-features li::before { content: '->'; color: var(--accent); flex-shrink: 0; }
+  .series-note {
+    margin-top: 40px; padding: 28px 36px;
+    background: rgba(232,255,0,0.04); border: 1px solid rgba(232,255,0,0.15);
+    display: flex; align-items: center; gap: 20px;
+  }
+  .series-note-text { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+  .series-note-text strong { color: var(--white); }
+  .series-note-text a { color: var(--accent); }
+
+  /* SPONSORS */
+  .sponsors-section { border-top: 1px solid var(--border); }
+  .sponsors-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+  .series-partner-block {
+    margin-top: 2px; padding: 40px 44px;
+    background: linear-gradient(135deg, rgba(232,255,0,0.06) 0%, rgba(255,77,0,0.04) 100%);
+    border: 1px solid rgba(232,255,0,0.2);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+  }
+  .series-partner-tag { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+  .series-partner-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+  .series-partner-price { font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: 2px; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .series-partner-desc { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+  .series-partner-perks { list-style: none; }
+  .series-partner-perks li { font-size: 13px; color: var(--text-muted); padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
+  .series-partner-perks li::before { content: '+'; color: var(--accent); font-weight: 700; }
+  .sponsor-tier { background: var(--mid); padding: 32px 28px; text-align: center; }
+  .sponsor-tier-name { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; margin-bottom: 8px; }
+  .tier-platinum { color: #E8E8E8; }
+  .tier-gold { color: #FFD700; }
+  .tier-silver { color: #C0C0C0; }
+  .tier-bronze { color: #CD7F32; }
+  .sponsor-price { font-size: 28px; font-weight: 700; font-family: 'Syne', sans-serif; margin-bottom: 20px; }
+  .sponsor-benefits { list-style: none; text-align: left; margin-bottom: 24px; }
+  .sponsor-benefits li { font-size: 12px; color: var(--text-muted); padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+  .sponsor-benefits li::before { content: 'v'; color: var(--accent); flex-shrink: 0; }
+
+  /* VENUE */
+  .venue { background: var(--mid); border-top: 1px solid var(--border); }
+  .venue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; align-items: start; }
+  .venue-map { background: #111; height: 300px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .venue-map-label { text-align: center; z-index: 1; }
+  .venue-map-icon { font-size: 48px; margin-bottom: 12px; }
+  .venue-map-text { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-muted); }
+  .venue-details h3 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .venue-sub { color: var(--accent); font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+  .venue-details p { font-size: 15px; line-height: 1.8; color: var(--text-muted); margin-bottom: 32px; }
+  .venue-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .venue-fact { background: var(--black); padding: 20px; }
+  .venue-fact-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+  .venue-fact-val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; }
+  .venue-dubai-teaser {
+    margin-top: 48px; padding: 36px 40px;
+    background: var(--black); border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 32px;
+  }
+  .venue-dubai-flag { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 4px; color: rgba(245,242,236,0.15); white-space: nowrap; }
+  .venue-dubai-info h4 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+  .venue-dubai-info p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+  /* FAQ */
+  .faq { border-top: 1px solid var(--border); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 60px; }
+  .faq-item { background: var(--mid); padding: 32px 36px; }
+  .faq-q { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .faq-a { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+  .faq-a a { color: var(--accent); text-decoration: none; }
+
+  /* CTA BAND */
+  .cta-band { background: var(--accent); padding: 80px 40px; text-align: center; }
+  .cta-band h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(48px, 8vw, 100px); letter-spacing: 4px; color: var(--black); line-height: 0.95; margin-bottom: 24px; }
+  .cta-band p { font-size: 18px; color: rgba(8,8,8,0.65); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .cta-band-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .btn-dark { background: var(--black); color: var(--accent); padding: 18px 44px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; transition: opacity 0.2s; }
+  .btn-dark:hover { opacity: 0.85; }
+  .btn-outline-dark { border: 2px solid var(--black); color: var(--black); padding: 18px 44px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+  .btn-outline-dark:hover { background: rgba(0,0,0,0.08); }
+
+  /* FOOTER */
+  footer { background: #040404; padding: 60px 40px 32px; border-top: 1px solid var(--border); }
+  .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 4px; margin-bottom: 16px; }
+  .footer-logo span { color: var(--accent); }
+  .footer-tagline { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
+  .footer-social { display: flex; gap: 12px; }
+  .social-link { width: 36px; height: 36px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none; color: var(--text-muted); transition: border-color 0.2s, color 0.2s; }
+  .social-link:hover { border-color: var(--white); color: var(--white); }
+  .footer-col h4 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .footer-col ul li a:hover { color: var(--white); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 16px; }
+  .footer-copy { font-size: 12px; color: var(--text-muted); }
+  .footer-legal { display: flex; gap: 24px; }
+  .footer-legal a { font-size: 12px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-legal a:hover { color: var(--white); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    section { padding: 70px 20px; }
+    .hero { padding: 0 20px 60px; }
+    .about-grid, .venue-grid, .faq-grid { grid-template-columns: 1fr; gap: 40px; }
+    .why-grid, .tickets-grid, .exhibitors-grid, .sponsors-tiers { grid-template-columns: 1fr; }
+    .speakers-grid { grid-template-columns: 1fr 1fr; }
+    .agenda-days { grid-template-columns: 1fr; }
+    .cities-grid { grid-template-columns: 1fr; }
+    .series-partner-block { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .venue-dubai-teaser { flex-direction: column; gap: 16px; }
+    .agenda-dubai-note { flex-direction: column; gap: 12px; }
+    .gallery-strip { grid-template-columns: 1fr; }
+    .gallery-strip .gallery-wide { grid-column: span 1; }
+    .gallery-strip img, .gallery-strip .gallery-wide img { height: 220px; }
+    .expo-photo { height: 220px; }
+    .venue-photo { min-height: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">MAIX<span>PO</span></a>
+  <div class="nav-links">
+    <a href="#cities">Cities</a>
+    <a href="#agenda">Agenda</a>
+    <a href="#speakers">Speakers</a>
+    <a href="#tickets">Tickets</a>
+    <a href="#exhibitors">Exhibit</a>
+    <a href="#sponsors">Sponsor</a>
+    <a href="#tickets" class="nav-cta">Register Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-img"></div>
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-tag">
+    Two-City Series &mdash; KL September &middot; Dubai November 2026
+  </div>
+
+  <h1 class="hero-title">
+    MAIX<span class="accent">PO</span><br>
+    <span class="outline">KL + DUBAI</span><br>
+    2026
+  </h1>
+
+  <p class="hero-sub">
+    <strong>AI Marketing Conference &amp; Expo.</strong> Two cities. Two days each.<br>
+    Where marketing leaders across SEA and the GCC come to learn, connect, and lead the AI revolution.
+  </p>
+
+  <div class="hero-meta">
+    <div class="hero-date">
+      <span class="hero-date-label">Edition 1</span>
+      <span class="hero-date-val">Kuala Lumpur — September 2026</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-date">
+      <span class="hero-date-label">Edition 2</span>
+      <span class="hero-date-val coming">Dubai — November 2026</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-date">
+      <span class="hero-date-label">Format</span>
+      <span class="hero-date-val">Hybrid &mdash; Physical + Virtual</span>
+    </div>
+    <div class="hero-cta-group">
+      <!-- Replace PAYLINK-EB with your actual Payxem pay-link code for Early Bird ticket -->
+      <a href="https://pxem.link/PAYLINK-EB" class="btn-primary" target="_blank" rel="noopener">Get Early Bird Ticket</a>
+      <a href="#cities" class="btn-secondary">Explore Both Cities</a>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item"><span class="ticker-dot"></span> AI Marketing</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Kuala Lumpur</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Generative AI</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Dubai</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Marketing Automation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Southeast Asia</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> AI Strategy</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Middle East</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Content AI</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Paid Media &amp; AI</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> AI Marketing</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Kuala Lumpur</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Generative AI</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Dubai</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Marketing Automation</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Southeast Asia</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> AI Strategy</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Middle East</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Content AI</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Paid Media &amp; AI</span>
+  </div>
+</div>
+
+<!-- GALLERY STRIP -->
+<div class="gallery-strip">
+  <div class="gallery-wide">
+    <img src="img/maixpo5.jpg" alt="MAIXPO expo floor networking" loading="lazy">
+  </div>
+  <div>
+    <img src="img/maixpo4.jpg" alt="MAIXPO exhibitor booths" loading="lazy">
+  </div>
+</div>
+
+<!-- CITIES -->
+<section class="cities" id="cities">
+  <div class="section-label">Two Cities. One Series.</div>
+  <h2 class="section-title">
+    The region's biggest<br>
+    <span class="accent">AI marketing event of 2026.</span>
+  </h2>
+
+  <div class="cities-grid">
+    <div class="city-card active">
+      <div class="city-num">01</div>
+      <div class="city-status open">Tickets Open</div>
+      <div class="city-name">Kuala Lumpur</div>
+      <div class="city-country">Malaysia &mdash; Southeast Asia</div>
+      <div class="city-date">September 2026</div>
+      <div class="city-date-note">Exact dates confirming soon &mdash; mid-September</div>
+      <div class="city-desc">
+        The opener and proving ground. KL is SEA's most accessible conference hub &mdash; easy visa for 160+ countries, world-class venues, and a city that knows how to host a serious event. A 100-300 seat physical anchor, plus a global virtual pass.
+      </div>
+      <div class="city-facts">
+        <div>
+          <div class="city-fact-label">Format</div>
+          <div class="city-fact-val">Hybrid (Physical + Virtual)</div>
+        </div>
+        <div>
+          <div class="city-fact-label">Audience</div>
+          <div class="city-fact-val">SEA, GCC &amp; South Asia</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="city-card coming-soon">
+      <div class="city-num">02</div>
+      <div class="city-status tba">Dates Announcing Soon</div>
+      <div class="city-name">Dubai</div>
+      <div class="city-country">UAE &mdash; Middle East &amp; GCC</div>
+      <div class="city-date">November 2026</div>
+      <div class="city-date-note">~8 weeks after KL &mdash; the flagship edition</div>
+      <div class="city-desc">
+        The flagship. Dubai brings richer sponsor budgets, a premium venue, and the GCC's most senior marketing community. Every lesson from KL applied. Series sponsors get both cities in one deal &mdash; the most efficient buy in regional marketing.
+      </div>
+      <div class="city-facts">
+        <div>
+          <div class="city-fact-label">Format</div>
+          <div class="city-fact-val">Hybrid (Physical + Virtual)</div>
+        </div>
+        <div>
+          <div class="city-fact-label">Audience</div>
+          <div class="city-fact-val">GCC, MENA &amp; South Asia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-label">What is MAIXPO</div>
+  <h2 class="section-title">
+    Marketing is being<br>
+    <span class="accent">rewritten by AI.</span><br>
+    Are you leading it?
+  </h2>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>
+        <strong>MAIXPO 2026</strong> is the region's dedicated AI marketing conference and expo &mdash; a two-city series covering Southeast Asia and the GCC. Two days per city of real strategies, proven tools, and honest conversations about how artificial intelligence is transforming the way brands grow.
+      </p>
+      <p>
+        This is not a hype fest. No vague keynotes about "the future." MAIXPO brings together working marketing professionals &mdash; CMOs, digital leads, agency founders, brand managers &mdash; who are actually deploying AI in campaigns, creative, analytics, and customer experience right now.
+      </p>
+      <p>
+        Whether you're just starting your AI journey or already running AI-powered campaigns, MAIXPO gives you the tools, contacts, and clarity to move faster and spend smarter.
+      </p>
+      <p>
+        <strong>Kuala Lumpur, September 2026. Dubai, November 2026.</strong> The two most important marketing markets in the Asia-Pacific and Gulf &mdash; connected by one event series.
+      </p>
+    </div>
+
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-num">2000+</div>
+        <div class="stat-label">Marketing professionals targeted across both cities and virtual</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">Speakers &mdash; CMOs, AI leads, founders &amp; strategists per city</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Cities across SEA and GCC &mdash; one connected series</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">20+</div>
+        <div class="stat-label">Exhibiting AI tools, platforms &amp; martech companies per city</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY ATTEND -->
+<section class="why" id="why">
+  <div class="section-label">Why Attend</div>
+  <h2 class="section-title">
+    Six reasons<br>
+    <span class="accent">to be in the room.</span>
+  </h2>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-num">01</div>
+      <div class="why-title">Real AI strategies that work</div>
+      <div class="why-text">No theoretical concepts. Every session is built around tactics that speakers have actually executed &mdash; with real results, real numbers, and real lessons from failure.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">02</div>
+      <div class="why-title">The regional marketing community</div>
+      <div class="why-text">Meet 1,000+ marketing professionals from Malaysia, Singapore, Indonesia, UAE, Pakistan, and beyond. The conversations in the corridors are worth the ticket alone.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">03</div>
+      <div class="why-title">Hands-on workshops</div>
+      <div class="why-text">Walk out with skills you can use on Monday morning. Our workshop sessions are practical, tools-based, and limited to small groups so you actually learn.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">04</div>
+      <div class="why-title">The AI marketing expo floor</div>
+      <div class="why-text">Explore 20+ of the most relevant AI tools for marketers &mdash; live demos, side-by-side comparisons, and the chance to negotiate real deals on the floor.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">05</div>
+      <div class="why-title">Structured networking</div>
+      <div class="why-text">We don't do awkward networking breaks. MAIXPO runs curated roundtables, lunch sessions, and a closing evening for meaningful professional connections.</div>
+    </div>
+    <div class="why-card">
+      <div class="why-num">06</div>
+      <div class="why-title">Choose your city &mdash; or do both</div>
+      <div class="why-text">KL opens in September across SEA, Dubai follows in November across the GCC. Attend one or both &mdash; the series pass gets you the full regional experience.</div>
+    </div>
+  </div>
+</section>
+
+<!-- AGENDA (KL) -->
+<section class="agenda" id="agenda">
+  <div class="section-label">Programme</div>
+  <h2 class="section-title">
+    Two days.<br>
+    <span class="accent">Packed programme.</span>
+  </h2>
+  <div class="agenda-city-label">Edition 1 &mdash; Kuala Lumpur, September 2026</div>
+
+  <div class="agenda-days">
+    <div>
+      <div class="agenda-day-title">Day 01 &mdash; September 2026, Kuala Lumpur</div>
+
+      <div class="agenda-item">
+        <div class="agenda-time">08:30</div>
+        <div>
+          <div class="agenda-content-title">Registration &amp; Morning Coffee</div>
+          <div class="agenda-content-text">Doors open. Pick up your badge, explore the expo floor, connect before the day starts.</div>
+          <span class="agenda-tag tag-networking">Networking</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">09:30</div>
+        <div>
+          <div class="agenda-content-title">Opening Keynote: The AI Marketing Shift &mdash; Where SEA Stands in 2026</div>
+          <div class="agenda-content-text">The state of AI adoption in Southeast Asia's marketing industry. What's working, what's failing, and where the real opportunity lies.</div>
+          <span class="agenda-tag tag-keynote">Keynote</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">10:30</div>
+        <div>
+          <div class="agenda-content-title">Panel: CMOs on AI &mdash; The Real Story Behind the Headlines</div>
+          <div class="agenda-content-text">Four senior marketing leaders discuss what AI has actually done to their teams, budgets, and results &mdash; honest, unsponsored conversation.</div>
+          <span class="agenda-tag tag-panel">Panel</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">12:00</div>
+        <div>
+          <div class="agenda-content-title">Networking Lunch &amp; Expo Floor</div>
+          <div class="agenda-content-text">Catered lunch. Expo floor open. Meet exhibitors, collect demos, talk to speakers.</div>
+          <span class="agenda-tag tag-networking">Networking</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">14:00</div>
+        <div>
+          <div class="agenda-content-title">Workshop Track A: Building Your First AI Marketing Stack</div>
+          <div class="agenda-content-text">Hands-on session. Choose your tools, connect your workflow, run your first AI campaign. Bring a laptop.</div>
+          <span class="agenda-tag tag-workshop">Workshop</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">14:00</div>
+        <div>
+          <div class="agenda-content-title">Workshop Track B: AI Content at Scale &mdash; Without Losing Your Brand Voice</div>
+          <div class="agenda-content-text">How to use GenAI for content creation while maintaining brand consistency. Real templates, real results.</div>
+          <span class="agenda-tag tag-workshop">Workshop</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">16:00</div>
+        <div>
+          <div class="agenda-content-title">Keynote: AI-Powered Paid Media &mdash; The New Rules of Performance Marketing</div>
+          <div class="agenda-content-text">How Meta, Google, and TikTok's AI systems are changing the game for performance marketers &mdash; and how to win in the new landscape.</div>
+          <span class="agenda-tag tag-keynote">Keynote</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">17:30</div>
+        <div>
+          <div class="agenda-content-title">Day 1 Close &amp; Evening Networking</div>
+          <div class="agenda-content-text">Wrap-up, drinks, and open networking. VIP attendees join the exclusive speaker dinner.</div>
+          <span class="agenda-tag tag-networking">Networking</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="agenda-day-title">Day 02 &mdash; September 2026, Kuala Lumpur</div>
+
+      <div class="agenda-item">
+        <div class="agenda-time">09:00</div>
+        <div>
+          <div class="agenda-content-title">Morning Keynote: The AI-Native Marketing Team &mdash; Structure, Skills &amp; Hiring</div>
+          <div class="agenda-content-text">What does a marketing team look like in 2027? How to upskill your current team and what roles you actually need to hire.</div>
+          <span class="agenda-tag tag-keynote">Keynote</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">10:00</div>
+        <div>
+          <div class="agenda-content-title">Panel: Agencies vs In-House &mdash; Who Wins the AI Race?</div>
+          <div class="agenda-content-text">Agency founders and brand-side marketing leaders debate where AI advantage really sits and what it means for client relationships.</div>
+          <span class="agenda-tag tag-panel">Panel</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">11:30</div>
+        <div>
+          <div class="agenda-content-title">Fireside Chat: AI, Data Privacy &amp; Marketing Ethics in SEA</div>
+          <div class="agenda-content-text">The regulation is coming. What marketers need to know about PDPA, data governance, and building trust with AI-powered personalisation.</div>
+          <span class="agenda-tag tag-panel">Fireside</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">12:30</div>
+        <div>
+          <div class="agenda-content-title">Networking Lunch &amp; Final Expo Hours</div>
+          <div class="agenda-content-text">Last chance to explore the expo floor, collect exhibitor deals, and schedule follow-up meetings.</div>
+          <span class="agenda-tag tag-networking">Networking</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">14:00</div>
+        <div>
+          <div class="agenda-content-title">Workshop Track C: Measuring AI Marketing ROI</div>
+          <div class="agenda-content-text">How to justify your AI investment to the CFO. Attribution models, KPI frameworks, and reporting dashboards for AI-driven campaigns.</div>
+          <span class="agenda-tag tag-workshop">Workshop</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">14:00</div>
+        <div>
+          <div class="agenda-content-title">Workshop Track D: AI for SME Marketers &mdash; Maximum Impact, Minimum Budget</div>
+          <div class="agenda-content-text">Free and low-cost AI tools that punch above their weight. Built for small teams and lean marketing budgets.</div>
+          <span class="agenda-tag tag-workshop">Workshop</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">16:00</div>
+        <div>
+          <div class="agenda-content-title">Closing Keynote: What's Next &mdash; AI Marketing in SEA Through 2030</div>
+          <div class="agenda-content-text">A forward-looking session on the technologies, platforms, and consumer behaviours that will define marketing in Southeast Asia over the next four years.</div>
+          <span class="agenda-tag tag-keynote">Keynote</span>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-time">17:00</div>
+        <div>
+          <div class="agenda-content-title">MAIXPO Awards &amp; Closing Ceremony</div>
+          <div class="agenda-content-text">Recognising outstanding AI marketing work from brands and agencies across Southeast Asia. Nominations open soon.</div>
+          <span class="agenda-tag tag-keynote">Ceremony</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="agenda-dubai-note">
+    <div class="agenda-dubai-icon">DUBAI NOV</div>
+    <div class="agenda-dubai-text">
+      <strong>Dubai edition follows the same two-day format in November 2026,</strong> adapted for the GCC audience with locally relevant speakers, a Dubai-focused business context, and the same practical, tactics-first approach. Dubai programme details will be announced after the KL edition.
+    </div>
+  </div>
+</section>
+
+<!-- SPEAKERS -->
+<section class="speakers" id="speakers">
+  <div class="section-label">Speakers</div>
+  <h2 class="section-title">
+    Practitioners.<br>
+    <span class="accent">Not just theorists.</span>
+  </h2>
+
+  <div class="speakers-grid">
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">Chief Marketing Officer</div>
+      <div class="speaker-company">Regional Tech Company, SEA</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">Head of AI &amp; Growth</div>
+      <div class="speaker-company">Global Agency Network</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">Founder &amp; CEO</div>
+      <div class="speaker-company">AI Marketing Platform</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">VP Digital Marketing</div>
+      <div class="speaker-company">Fortune 500 Brand, APAC</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">Director of Performance</div>
+      <div class="speaker-company">Malaysia's Leading Agency</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">AI Research Lead</div>
+      <div class="speaker-company">Global Tech Platform</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">TBA</div>
+      <div class="speaker-name">Speaker TBA</div>
+      <div class="speaker-title">Founder</div>
+      <div class="speaker-company">MarTech Startup, KL</div>
+      <div class="speaker-tba">&#9203; Announcement coming soon</div>
+    </div>
+    <div class="speaker-card">
+      <div class="speaker-avatar">+</div>
+      <div class="speaker-name">20+ More Speakers</div>
+      <div class="speaker-title">CMOs &middot; Agency Founders &middot; AI Leads &middot; Brand Strategists</div>
+      <div class="speaker-company">Across SEA, GCC &amp; Beyond</div>
+      <div class="speaker-tba">&#9203; Full lineup dropping soon</div>
+    </div>
+  </div>
+
+  <div class="speakers-note">
+    &#127908; <div><strong>Want to speak at MAIXPO?</strong> We're accepting applications from marketing practitioners with real AI experience. No sales pitches. No vendor talks. <a href="mailto:speakers@maixpo.com">Apply at speakers@maixpo.com</a></div>
+  </div>
+</section>
+
+<!-- TICKETS -->
+<section class="tickets" id="tickets">
+  <div class="section-label">Registration</div>
+  <h2 class="section-title">
+    Secure your seat.<br>
+    <span class="accent">Early bird won't last.</span>
+  </h2>
+
+  <div class="tickets-city-toggle">
+    <button class="toggle-btn active" onclick="showCity('kl', this)">KL &mdash; September 2026</button>
+    <button class="toggle-btn" onclick="showCity('dubai', this)">Dubai &mdash; November 2026</button>
+  </div>
+
+  <div id="tickets-kl">
+    <div class="tickets-grid">
+
+      <div class="ticket-card">
+        <div class="ticket-badge">&#9889; Early Bird &mdash; Limited 400 Seats</div>
+        <div class="ticket-type">Standard</div>
+        <div class="ticket-price"><sup>$</sup>35 <span class="regular">$50</span></div>
+        <div class="ticket-rm">RM 140 &middot; Save $15</div>
+        <div class="ticket-limit">&#9200; Limited availability &mdash; ends when sold</div>
+        <ul class="ticket-features">
+          <li><span class="tick">&#10003;</span> Full 2-day access &mdash; all keynotes &amp; panels</li>
+          <li><span class="tick">&#10003;</span> Expo floor access</li>
+          <li><span class="tick">&#10003;</span> 2 workshop sessions of your choice</li>
+          <li><span class="tick">&#10003;</span> Networking lunch both days</li>
+          <li><span class="tick">&#10003;</span> Speaker materials &amp; resources</li>
+          <li><span class="tick">&#10003;</span> Certificate of attendance</li>
+        </ul>
+        <!-- Replace PAYLINK-KL-EB with actual Payxem pay-link for KL Early Bird $35 -->
+        <a href="https://pxem.link/PAYLINK-KL-EB" class="ticket-btn ticket-btn-dark" target="_blank" rel="noopener">Register &mdash; Early Bird</a>
+      </div>
+
+      <div class="ticket-card featured">
+        <div class="ticket-badge">Most Popular</div>
+        <div class="ticket-type">Standard</div>
+        <div class="ticket-price"><sup>$</sup>50</div>
+        <div class="ticket-rm">RM 200 &middot; General admission</div>
+        <div class="ticket-limit">Open registration</div>
+        <ul class="ticket-features">
+          <li><span class="tick">&#10003;</span> Full 2-day access &mdash; all keynotes &amp; panels</li>
+          <li><span class="tick">&#10003;</span> Expo floor access</li>
+          <li><span class="tick">&#10003;</span> 2 workshop sessions of your choice</li>
+          <li><span class="tick">&#10003;</span> Networking lunch both days</li>
+          <li><span class="tick">&#10003;</span> Speaker materials &amp; resources</li>
+          <li><span class="tick">&#10003;</span> Certificate of attendance</li>
+        </ul>
+        <!-- Replace PAYLINK-KL-STD with actual Payxem pay-link for KL Standard $50 -->
+        <a href="https://pxem.link/PAYLINK-KL-STD" class="ticket-btn ticket-btn-outline" target="_blank" rel="noopener">Register Now</a>
+      </div>
+
+      <div class="ticket-card">
+        <div class="ticket-badge">&#9889; VIP Early Bird &mdash; Limited 100 Seats</div>
+        <div class="ticket-type">VIP / Executive</div>
+        <div class="ticket-price"><sup>$</sup>50 <span class="regular">$100</span></div>
+        <div class="ticket-rm">RM 200 &middot; VIP at Standard price</div>
+        <div class="ticket-limit">&#9200; Limited 100 seats only</div>
+        <ul class="ticket-features">
+          <li><span class="tick">&#10003;</span> Everything in Standard</li>
+          <li><span class="tick">&#10003;</span> Priority front-row seating</li>
+          <li><span class="tick">&#10003;</span> Access to all 4 workshop tracks</li>
+          <li><span class="tick">&#10003;</span> VIP networking lounge</li>
+          <li><span class="tick">&#10003;</span> Exclusive speaker lunch (Day 1)</li>
+          <li><span class="tick">&#10003;</span> VIP badge &amp; premium event kit</li>
+        </ul>
+        <!-- Replace PAYLINK-KL-VIP with actual Payxem pay-link for KL VIP Early Bird $50 -->
+        <a href="https://pxem.link/PAYLINK-KL-VIP" class="ticket-btn ticket-btn-dark" target="_blank" rel="noopener">Register &mdash; VIP Early Bird</a>
+      </div>
+
+    </div>
+    <p style="margin-top:32px; font-size:13px; color:var(--text-muted); text-align:center;">
+      Full refund guaranteed if event does not proceed. Group bookings (5+) available &mdash; contact <a href="mailto:hello@maixpo.com" style="color:var(--accent)">hello@maixpo.com</a>
+    </p>
+  </div>
+
+  <div id="tickets-dubai" style="display:none;">
+    <div class="tickets-grid">
+      <div class="ticket-dubai-coming">
+        <h3>Dubai Tickets Open Soon</h3>
+        <p>Dubai edition ticket sales open closer to the November date.<br>
+        Register for KL first &mdash; KL attendees get priority Dubai early bird access.</p>
+        <div style="margin-top:28px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="#tickets" onclick="showCity('kl', document.querySelector('.toggle-btn'))" class="btn-primary" style="font-size:13px; padding:14px 28px;">Get KL Ticket First</a>
+          <a href="mailto:hello@maixpo.com" class="btn-secondary" style="font-size:13px; padding:14px 28px;">Notify Me &mdash; Dubai</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXHIBITORS -->
+<section class="exhibitors" id="exhibitors">
+  <div class="section-label">Exhibit at MAIXPO</div>
+  <h2 class="section-title">
+    Put your brand<br>
+    <span class="accent">in front of 1,000+<br>decision-makers.</span>
+  </h2>
+
+  <div class="exhibitors-grid">
+    <div class="booth-card">
+      <div class="booth-icon">&#128307;</div>
+      <div class="booth-name">Standing Space</div>
+      <div class="booth-price">$999</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">RM 3,996 &middot; Max 20 units per city</div>
+      <ul class="booth-features">
+        <li>1 standing display + branded banner</li>
+        <li>1 chair &amp; small product table</li>
+        <li>2 executive tickets included</li>
+        <li>Listed in event programme</li>
+        <li>Logo on website exhibitor page</li>
+      </ul>
+      <a href="mailto:exhibit@maixpo.com" class="ticket-btn ticket-btn-white">Enquire Now</a>
+    </div>
+
+    <div class="booth-card">
+      <div class="booth-icon">&#127956;</div>
+      <div class="booth-name">Small Booth</div>
+      <div class="booth-price">$2,500</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">RM 10,000 &middot; 3x2m shell scheme</div>
+      <ul class="booth-features">
+        <li>3x2m shell scheme booth</li>
+        <li>Table, 2 chairs, fascia board, power</li>
+        <li>3 event tickets included</li>
+        <li>Featured on website with profile</li>
+        <li>Logo on all printed materials</li>
+        <li>1 social media mention</li>
+      </ul>
+      <a href="mailto:exhibit@maixpo.com" class="ticket-btn ticket-btn-white">Enquire Now</a>
+    </div>
+
+    <div class="booth-card">
+      <div class="booth-icon">&#127970;</div>
+      <div class="booth-name">Medium Booth</div>
+      <div class="booth-price">$4,000</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">RM 16,000 &middot; 4x3m premium</div>
+      <ul class="booth-features">
+        <li>4x3m shell scheme with backwall</li>
+        <li>Counter, 2 shelves, lighting, power</li>
+        <li>5 event tickets included</li>
+        <li>Priority placement on expo floor</li>
+        <li>Logo on stage backdrops &amp; banners</li>
+        <li>3 social mentions + email blast</li>
+        <li>Post-event attendee report</li>
+      </ul>
+      <a href="mailto:exhibit@maixpo.com" class="ticket-btn ticket-btn-white">Enquire Now</a>
+    </div>
+  </div>
+
+  <img src="img/maiexpo6.jpg" alt="MAIXPO expo floor with AI tool exhibitors" class="expo-photo" loading="lazy">
+
+  <div class="series-note">
+    <div class="series-note-text">
+      <strong>Exhibiting at both cities?</strong> Series exhibitor packages are available at a combined discount.
+      Book KL + Dubai in one contract and get priority floor placement at both venues.
+      Contact <a href="mailto:exhibit@maixpo.com">exhibit@maixpo.com</a> for series pricing.
+    </div>
+  </div>
+</section>
+
+<!-- SPONSORS -->
+<section class="sponsors-section" id="sponsors">
+  <div class="section-label">Sponsorship</div>
+  <h2 class="section-title">
+    Be seen. Be heard.<br>
+    <span class="accent">Be remembered.</span>
+  </h2>
+
+  <div class="series-partner-block">
+    <div>
+      <div class="series-partner-tag">&#11088; Premium &mdash; Highest Value</div>
+      <div class="series-partner-title">Series Partner</div>
+      <div class="series-partner-price">~$20,000</div>
+      <div class="series-partner-desc">One contract. Both cities. The flagship sponsorship product. Cover KL and Dubai in a single deal &mdash; the most efficient regional buy for AI tools and martech companies who want to reach the entire region in 2026. Priced at a premium above two single-city Platinums.</div>
+    </div>
+    <div>
+      <ul class="series-partner-perks">
+        <li>Platinum-level benefits at both KL and Dubai</li>
+        <li>Keynote speaking slot at each city</li>
+        <li>Title partner branding across all materials</li>
+        <li>Largest booth at both venues</li>
+        <li>20 tickets across both editions</li>
+        <li>Dedicated email blasts to both audiences</li>
+        <li>Post-event lead reports from both cities</li>
+        <li>Social series campaign (both cities combined)</li>
+      </ul>
+      <a href="mailto:sponsors@maixpo.com" class="ticket-btn ticket-btn-white" style="margin-top:24px;display:block;text-align:center;">Enquire &mdash; Series Partner</a>
+    </div>
+  </div>
+
+  <div class="sponsors-tiers" style="margin-top:2px;">
+
+    <div class="sponsor-tier">
+      <div class="sponsor-tier-name tier-bronze">Bronze</div>
+      <div class="sponsor-price">$3,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 12,000</div>
+      <ul class="sponsor-benefits">
+        <li>Logo on all event materials</li>
+        <li>Social media announcement</li>
+        <li>1 standing space included</li>
+        <li>3 event tickets</li>
+        <li>Website listing</li>
+      </ul>
+      <a href="mailto:sponsors@maixpo.com" class="ticket-btn ticket-btn-white" style="font-size:11px;">Enquire</a>
+    </div>
+
+    <div class="sponsor-tier">
+      <div class="sponsor-tier-name tier-silver">Silver</div>
+      <div class="sponsor-price">$5,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 20,000</div>
+      <ul class="sponsor-benefits">
+        <li>Everything in Bronze</li>
+        <li>Stage mention both days</li>
+        <li>Small booth included</li>
+        <li>5 event tickets</li>
+        <li>Email blast inclusion</li>
+        <li>Banner placement</li>
+      </ul>
+      <a href="mailto:sponsors@maixpo.com" class="ticket-btn ticket-btn-white" style="font-size:11px;">Enquire</a>
+    </div>
+
+    <div class="sponsor-tier" style="border:1px solid rgba(255,215,0,0.3);">
+      <div class="sponsor-tier-name tier-gold">Gold</div>
+      <div class="sponsor-price">$8,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 32,000</div>
+      <ul class="sponsor-benefits">
+        <li>Everything in Silver</li>
+        <li>15-minute speaking slot</li>
+        <li>Medium booth included</li>
+        <li>8 event tickets</li>
+        <li>Dedicated email blast</li>
+        <li>On-stage logo throughout</li>
+        <li>Post-event lead report</li>
+      </ul>
+      <a href="mailto:sponsors@maixpo.com" class="ticket-btn ticket-btn-white" style="font-size:11px;">Enquire</a>
+    </div>
+
+    <div class="sponsor-tier" style="border:1px solid rgba(232,232,232,0.2);">
+      <div class="sponsor-tier-name tier-platinum">Platinum</div>
+      <div class="sponsor-price">$12,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 48,000</div>
+      <ul class="sponsor-benefits">
+        <li>Everything in Gold</li>
+        <li>Title sponsor &mdash; co-branding</li>
+        <li>Keynote speaking slot (30 min)</li>
+        <li>Premium booth placement</li>
+        <li>15 event tickets</li>
+        <li>All communications logo</li>
+        <li>1:1 session with top speakers</li>
+        <li>Full post-event data report</li>
+      </ul>
+      <a href="mailto:sponsors@maixpo.com" class="ticket-btn ticket-btn-white" style="font-size:11px;">Enquire</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- VENUE -->
+<section class="venue" id="venue">
+  <div class="section-label">Location</div>
+  <h2 class="section-title">
+    Edition 1:<br>
+    <span class="accent">Kuala Lumpur, Malaysia.</span>
+  </h2>
+
+  <div class="venue-grid">
+    <div class="venue-map" style="padding:0; border:none;">
+      <img src="img/maixpo3.jpg" alt="MAIXPO conference venue entrance" class="venue-photo">
+    </div>
+
+    <div class="venue-details">
+      <h3>Kuala Lumpur</h3>
+      <div class="venue-sub">Malaysia &mdash; September 2026</div>
+      <p>
+        KL is Southeast Asia's most accessible conference hub &mdash; world-class venues, an international business community, and a city that has hosted hundreds of major regional events. Venue will be announced once confirmed.
+      </p>
+      <div class="venue-facts">
+        <div class="venue-fact">
+          <div class="venue-fact-label">Nearest Airport</div>
+          <div class="venue-fact-val">KLIA &mdash; 45 min by train</div>
+        </div>
+        <div class="venue-fact">
+          <div class="venue-fact-label">From Singapore</div>
+          <div class="venue-fact-val">55 min flight</div>
+        </div>
+        <div class="venue-fact">
+          <div class="venue-fact-label">From Dubai</div>
+          <div class="venue-fact-val">7 hr direct flight</div>
+        </div>
+        <div class="venue-fact">
+          <div class="venue-fact-label">Visa Policy</div>
+          <div class="venue-fact-val">160+ countries visa-free</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="venue-dubai-teaser">
+    <div class="venue-dubai-flag">DUBAI</div>
+    <div class="venue-dubai-info">
+      <h4>Edition 2: Dubai, UAE &mdash; November 2026</h4>
+      <p>
+        The flagship edition. Dubai brings the GCC's most senior marketing community, premium venue infrastructure, and a richer sponsor landscape. Venue and exact dates will be announced once confirmed. Register interest at <a href="mailto:hello@maixpo.com" style="color:var(--accent)">hello@maixpo.com</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title">
+    Common questions.<br>
+    <span class="accent">Straight answers.</span>
+  </h2>
+
+  <div class="faq-grid">
+    <div class="faq-item">
+      <div class="faq-q">Who is MAIXPO for?</div>
+      <div class="faq-a">Marketing managers, CMOs, digital leads, agency founders, brand strategists, ecommerce managers, and entrepreneurs who are serious about using AI to grow. If you're responsible for marketing results, MAIXPO is for you.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What's the difference between KL and Dubai editions?</div>
+      <div class="faq-a">KL is Edition 1 in September &mdash; the opener, focused on the SEA marketing community. Dubai is Edition 2 in November &mdash; the flagship, adapted for the GCC. Same format, same practical approach, different local context and speaker lineup. Sponsors and exhibitors can book one or both cities.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Do I need a technical background to attend?</div>
+      <div class="faq-a">Not at all. MAIXPO is built for marketing practitioners, not engineers. Every session is designed for people who run campaigns, manage brands, and drive growth &mdash; no coding required.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I attend both cities?</div>
+      <div class="faq-a">Yes, and we encourage it. KL in September, Dubai in November &mdash; the full series gives you the regional network, both city audiences, and continuity across the AI marketing conversation. Series passes with a discount will be available.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What language is the event in?</div>
+      <div class="faq-a">All sessions, workshops, and materials are in English. MAIXPO is designed as a regional international event welcoming attendees from across Southeast Asia, the GCC, and South Asia.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can my company sponsor or exhibit?</div>
+      <div class="faq-a">Yes. We offer sponsorship packages from $3,000 per city and exhibitor booths from $999 per city. A Series Partner package covers both cities in one contract. Email <a href="mailto:sponsors@maixpo.com">sponsors@maixpo.com</a> for a full prospectus.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the refund policy?</div>
+      <div class="faq-a">Full refund available if the event does not proceed. Ticket transfers are allowed up to 14 days before the event. No refunds for cancellations within 14 days, but tickets are fully transferable.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">I'm interested in speaking. How do I apply?</div>
+      <div class="faq-a">We welcome applications from working marketing professionals with real AI implementation experience. No vendor pitches or sales presentations. Apply at <a href="mailto:speakers@maixpo.com">speakers@maixpo.com</a> with your topic and brief bio.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <h2>Join MAIXPO<br>2026</h2>
+  <p>KL in September. Dubai in November. The region's AI marketing event of the year &mdash; two chances to be in the room.</p>
+  <div class="cta-band-buttons">
+    <!-- Replace PAYLINK-KL-EB with actual Payxem pay-link for Early Bird ticket -->
+    <a href="https://pxem.link/PAYLINK-KL-EB" class="btn-dark" target="_blank" rel="noopener">Get KL Ticket &mdash; Early Bird</a>
+    <a href="mailto:sponsors@maixpo.com" class="btn-outline-dark">Sponsor &amp; Exhibit</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">MAIX<span>PO</span></div>
+      <div class="footer-tagline">AI Marketing Conference &amp; Expo. Two-city series 2026: Kuala Lumpur, September &middot; Dubai, November.</div>
+      <div class="footer-social">
+        <a href="#" class="social-link">in</a>
+        <a href="#" class="social-link">&#120143;</a>
+        <a href="#" class="social-link">ig</a>
+        <a href="#" class="social-link">yt</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Attend</h4>
+      <ul>
+        <li><a href="#tickets">KL Tickets</a></li>
+        <li><a href="#tickets">Dubai Tickets</a></li>
+        <li><a href="#speakers">Speakers</a></li>
+        <li><a href="#agenda">Programme</a></li>
+        <li><a href="mailto:hello@maixpo.com">Group Bookings</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Exhibit &amp; Sponsor</h4>
+      <ul>
+        <li><a href="#sponsors">Sponsorship Tiers</a></li>
+        <li><a href="#sponsors">Series Partner</a></li>
+        <li><a href="#exhibitors">Exhibitor Booths</a></li>
+        <li><a href="mailto:sponsors@maixpo.com">Get Prospectus</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@maixpo.com">hello@maixpo.com</a></li>
+        <li><a href="mailto:speakers@maixpo.com">Speak at MAIXPO</a></li>
+        <li><a href="mailto:exhibit@maixpo.com">Exhibitor Enquiry</a></li>
+        <li><a href="mailto:sponsors@maixpo.com">Sponsorship</a></li>
+        <li><a href="mailto:media@maixpo.com">Media &amp; Press</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy">&#169; 2026 MAIXPO. AI Marketing Conference &amp; Expo. Kuala Lumpur &middot; Dubai.</div>
+    <div class="footer-legal">
+      <a href="mailto:hello@maixpo.com">Privacy</a>
+      <a href="mailto:hello@maixpo.com">Terms</a>
+      <a href="mailto:hello@maixpo.com">Refund Policy</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showCity(city, btn) {
+  document.getElementById('tickets-kl').style.display = city === 'kl' ? 'block' : 'none';
+  document.getElementById('tickets-dubai').style.display = city === 'dubai' ? 'block' : 'none';
+  document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
