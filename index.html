@@ -576,6 +576,34 @@
   }
   .reg-back:hover { color: var(--white); }
   .reg-error { font-size: 13px; color: #ff5c5c; margin-top: 10px; display: none; }
+  .reg-required { color: var(--accent); }
+  .reg-optional { font-size: 10px; color: var(--text-muted); text-transform: none; letter-spacing: 0; font-weight: 400; }
+  .reg-promo-toggle {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text-muted); cursor: pointer; text-decoration: underline;
+    text-underline-offset: 3px; transition: color 0.2s;
+  }
+  .reg-promo-toggle:hover { color: var(--accent); }
+  .reg-promo-box { display: none; margin-top: 10px; }
+  .reg-promo-row { display: flex; gap: 8px; align-items: center; }
+  .reg-promo-input { margin: 0 !important; flex: 1; letter-spacing: 2px; }
+  .reg-promo-apply-btn {
+    background: transparent; border: 1px solid var(--border); color: var(--white);
+    padding: 0 18px; height: 48px; font-family: 'Syne', sans-serif;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; white-space: nowrap; transition: border-color 0.2s, color 0.2s; flex-shrink: 0;
+  }
+  .reg-promo-apply-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .reg-promo-msg { display: none; margin-top: 8px; font-size: 12px; letter-spacing: 0.5px; }
+  .reg-promo-msg.success { color: var(--accent); }
+  .reg-promo-msg.error { color: #ff5c5c; }
+  .reg-price-box {
+    margin-top: 20px; padding: 14px 16px;
+    background: rgba(232,255,0,0.05); border: 1px solid rgba(232,255,0,0.15);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .reg-price-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+  .reg-price-value { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--accent); }
   .reg-confirm-icon { font-size: 44px; margin-bottom: 12px; color: var(--accent); }
   .reg-confirm-note {
     background: rgba(232,255,0,0.05); border: 1px solid rgba(232,255,0,0.15);
@@ -1485,23 +1513,23 @@
       <p class="reg-subtitle">Join marketers, AI practitioners and brand leaders at the region's premier AI marketing event.</p>
       <div class="reg-tier-badge" id="regTierBadge">Early Bird Standard &mdash; KL</div>
       <div class="reg-field">
-        <label class="reg-label" for="regName">Full Name</label>
+        <label class="reg-label" for="regName">Full Name <span class="reg-required">*</span></label>
         <input class="reg-input" id="regName" type="text" placeholder="Your full name" autocomplete="name">
       </div>
       <div class="reg-field">
-        <label class="reg-label" for="regEmail">Work Email</label>
+        <label class="reg-label" for="regEmail">Work Email <span class="reg-required">*</span></label>
         <input class="reg-input" id="regEmail" type="email" placeholder="you@company.com" autocomplete="email">
       </div>
       <div class="reg-field">
-        <label class="reg-label" for="regCompany">Company</label>
+        <label class="reg-label" for="regCompany">Company <span class="reg-optional">(optional)</span></label>
         <input class="reg-input" id="regCompany" type="text" placeholder="Your company or brand" autocomplete="organization">
       </div>
       <div class="reg-field">
-        <label class="reg-label" for="regJobTitle">Job Title</label>
+        <label class="reg-label" for="regJobTitle">Job Title <span class="reg-optional">(optional)</span></label>
         <input class="reg-input" id="regJobTitle" type="text" placeholder="e.g. Head of Marketing" autocomplete="organization-title">
       </div>
       <div class="reg-field">
-        <label class="reg-label" for="regIndustry">Industry</label>
+        <label class="reg-label" for="regIndustry">Industry <span class="reg-optional">(optional)</span></label>
         <div class="reg-select-wrap">
           <select class="reg-select" id="regIndustry">
             <option value="">Select your industry</option>
@@ -1557,6 +1585,22 @@
           </select>
         </div>
       </div>
+      <!-- Promo code -->
+      <div class="reg-field">
+        <div class="reg-promo-toggle" id="regPromoToggle" onclick="regTogglePromo()">Have a promo code?</div>
+        <div class="reg-promo-box" id="regPromoBox">
+          <div class="reg-promo-row">
+            <input class="reg-input reg-promo-input" id="regPromoInput" type="text" placeholder="ENTER CODE" autocomplete="off" oninput="this.value=this.value.toUpperCase()">
+            <button type="button" class="reg-promo-apply-btn" id="regPromoApplyBtn" onclick="regApplyPromo()">Apply</button>
+          </div>
+          <div class="reg-promo-msg" id="regPromoMsg"></div>
+        </div>
+      </div>
+      <!-- Price summary -->
+      <div id="regPriceBox" class="reg-price-box">
+        <span id="regPriceLabel" class="reg-price-label"></span>
+        <span id="regPriceValue" class="reg-price-value"></span>
+      </div>
       <div class="reg-error" id="regErr2"></div>
       <button type="button" class="reg-btn" id="regSubmitBtn" onclick="regSubmit()">Proceed to Payment</button>
       <button type="button" class="reg-back" onclick="regGoStep1()">&#8592; Back</button>
@@ -1588,11 +1632,19 @@ function showCity(city, btn) {
 
 // Registration modal
 var _regCity = 'KL', _regTier = 'standard';
+var _promoCode = null, _promoDiscount = 0, _promoOriginal = 0, _promoFinal = 0;
+var _PRICES = { standard: 39.99, vip: 99.99 };
 
 function openRegModal(city, tier, label) {
   _regCity = city;
   _regTier = tier;
+  _promoCode = null; _promoDiscount = 0;
   document.getElementById('regTierBadge').textContent = label + ' — ' + city;
+  document.getElementById('regPromoInput').value = '';
+  document.getElementById('regPromoMsg').textContent = '';
+  document.getElementById('regPromoMsg').className = 'reg-promo-msg';
+  document.getElementById('regPromoBox').style.display = 'none';
+  document.getElementById('regPromoToggle').textContent = 'Have a promo code?';
   regSetStep(1);
   document.getElementById('regOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1622,18 +1674,79 @@ function regGoStep1() {
   regSetStep(1);
 }
 
+function regTogglePromo() {
+  var box = document.getElementById('regPromoBox');
+  var toggle = document.getElementById('regPromoToggle');
+  var open = box.style.display !== 'none' && box.style.display !== '';
+  box.style.display = open ? 'none' : 'block';
+  toggle.textContent = open ? 'Have a promo code?' : 'Hide promo code';
+}
+
+function regUpdatePriceBox() {
+  var base = _PRICES[_regTier] || 39.99;
+  var box = document.getElementById('regPriceBox');
+  var label = document.getElementById('regPriceLabel');
+  var val = document.getElementById('regPriceValue');
+  if (_promoCode && _promoDiscount > 0) {
+    var final = (base * (1 - _promoDiscount / 100)).toFixed(2);
+    label.textContent = 'Total after ' + _promoDiscount + '% OFF';
+    val.innerHTML = '<span style="text-decoration:line-through;opacity:0.4;font-size:13px;margin-right:8px;">$' + base.toFixed(2) + '</span>$' + final;
+  } else {
+    label.textContent = 'Total';
+    val.textContent = '$' + base.toFixed(2);
+  }
+  box.style.display = 'flex';
+}
+
+function regApplyPromo() {
+  var code = document.getElementById('regPromoInput').value.trim().toUpperCase();
+  var msg = document.getElementById('regPromoMsg');
+  var btn = document.getElementById('regPromoApplyBtn');
+  if (!code) { msg.textContent = 'Please enter a promo code.'; msg.className = 'reg-promo-msg error'; msg.style.display = 'block'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  msg.style.display = 'none';
+  fetch('https://maixpo-api.khalidgraphy-com.workers.dev/api/validate-promo', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: code, tier: _regTier })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    btn.disabled = false;
+    btn.textContent = 'Apply';
+    if (data.valid) {
+      _promoCode = data.code;
+      _promoDiscount = data.discount_pct;
+      var final = (data.final_amount / 100).toFixed(2);
+      var orig = (data.original_amount / 100).toFixed(2);
+      msg.textContent = data.discount_pct + '% OFF applied. New price: $' + final + ' (was $' + orig + ')';
+      msg.className = 'reg-promo-msg success';
+      msg.style.display = 'block';
+    } else {
+      _promoCode = null; _promoDiscount = 0;
+      msg.textContent = data.error || 'Invalid promo code.';
+      msg.className = 'reg-promo-msg error';
+      msg.style.display = 'block';
+    }
+    regUpdatePriceBox();
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Apply';
+    msg.textContent = 'Could not verify code. Please try again.';
+    msg.className = 'reg-promo-msg error';
+    msg.style.display = 'block';
+  });
+}
+
 function regGoStep2() {
   var name = document.getElementById('regName').value.trim();
   var email = document.getElementById('regEmail').value.trim();
-  var company = document.getElementById('regCompany').value.trim();
-  var jobTitle = document.getElementById('regJobTitle').value.trim();
-  var industry = document.getElementById('regIndustry').value;
   document.getElementById('regErr1').style.display = 'none';
   if (!name) { regShowErr('regErr1', 'Please enter your full name.'); return; }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { regShowErr('regErr1', 'Please enter a valid email address.'); return; }
-  if (!company) { regShowErr('regErr1', 'Please enter your company name.'); return; }
-  if (!jobTitle) { regShowErr('regErr1', 'Please enter your job title.'); return; }
-  if (!industry) { regShowErr('regErr1', 'Please select your industry.'); return; }
+  regUpdatePriceBox();
   regSetStep(2);
 }
 
@@ -1650,12 +1763,13 @@ function regSubmit() {
     ticket_tier: _regTier,
     full_name: document.getElementById('regName').value.trim(),
     email: document.getElementById('regEmail').value.trim(),
-    company: document.getElementById('regCompany').value.trim(),
-    job_title: document.getElementById('regJobTitle').value.trim(),
-    industry: document.getElementById('regIndustry').value,
+    company: document.getElementById('regCompany').value.trim() || null,
+    job_title: document.getElementById('regJobTitle').value.trim() || null,
+    industry: document.getElementById('regIndustry').value || null,
     ai_stage: document.getElementById('regAiStage').value || null,
     goals: goals,
-    hear_about: document.getElementById('regHear').value || null
+    hear_about: document.getElementById('regHear').value || null,
+    promo_code: _promoCode || null
   };
 
   fetch('https://maixpo-api.khalidgraphy-com.workers.dev/api/register', {
