@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmed — MAIXPO 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --black: #0a0a0a; --white: #f5f2ec; --accent: #e8ff00; --text-muted: rgba(245,242,236,0.45); --border: rgba(245,242,236,0.1); --mid: #141414; }
+    body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; margin-bottom: 60px; }
+    .logo span { color: var(--accent); }
+    .card { background: var(--mid); border: 1px solid var(--border); padding: 56px 48px; max-width: 520px; width: 100%; text-align: center; }
+    .icon { font-size: 52px; margin-bottom: 20px; color: var(--accent); }
+    .tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .sub { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 32px; }
+    .info-box { background: rgba(232,255,0,0.05); border: 1px solid rgba(232,255,0,0.15); padding: 22px 24px; font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-bottom: 36px; text-align: left; }
+    .info-box strong { color: var(--white); }
+    .btn { display: inline-block; background: var(--accent); color: var(--black); font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; padding: 16px 36px; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.85; }
+    .loading { color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
+    .error-msg { color: #ff5c5c; font-size: 14px; margin-bottom: 20px; display: none; }
+    @media (max-width: 560px) { .card { padding: 40px 24px; } }
+  </style>
+</head>
+<body>
+  <div class="logo">MAI<span>XPO</span></div>
+  <div class="card" id="card">
+    <div class="icon" id="stateIcon">&#9203;</div>
+    <div class="tag" id="stateTag">Verifying payment</div>
+    <h1 id="stateTitle">Confirming your payment...</h1>
+    <p class="sub" id="stateSub">Please wait while we verify your transaction with Stripe.</p>
+    <p class="loading" id="loadingNote">This usually takes just a moment.</p>
+    <p class="error-msg" id="errMsg"></p>
+    <div class="info-box" id="infoBox" style="display:none">
+      <strong>What happens next?</strong><br>
+      You will receive a confirmation email with your official e-ticket and attendee welcome pack. Check your spam folder if it doesn't arrive within a few minutes.<br><br>
+      Questions? Email us at <strong>hello@maixpo.com</strong>
+    </div>
+    <a href="https://maixpo.com" class="btn" id="homeBtn" style="display:none">Back to MAIXPO</a>
+  </div>
+
+  <script>
+    var sessionId = new URLSearchParams(window.location.search).get('session_id');
+
+    function showSuccess() {
+      document.getElementById('stateIcon').textContent = '✓';
+      document.getElementById('stateTag').textContent = "You're confirmed";
+      document.getElementById('stateTitle').textContent = 'Payment confirmed!';
+      document.getElementById('stateSub').textContent = "You're officially registered for MAIXPO 2026 in Kuala Lumpur. We can't wait to see you there.";
+      document.getElementById('loadingNote').style.display = 'none';
+      document.getElementById('infoBox').style.display = 'block';
+      document.getElementById('homeBtn').style.display = 'inline-block';
+    }
+
+    function showError(msg) {
+      document.getElementById('stateIcon').textContent = '⚠';
+      document.getElementById('stateTag').textContent = 'Verification issue';
+      document.getElementById('stateTitle').textContent = 'We could not verify your payment';
+      document.getElementById('stateSub').textContent = 'If you completed payment, your ticket is confirmed. Please check your email for a receipt from Stripe.';
+      document.getElementById('loadingNote').style.display = 'none';
+      document.getElementById('errMsg').textContent = msg || '';
+      document.getElementById('errMsg').style.display = msg ? 'block' : 'none';
+      document.getElementById('infoBox').innerHTML = 'Need help? Email us at <strong>hello@maixpo.com</strong> and include your payment receipt.';
+      document.getElementById('infoBox').style.display = 'block';
+      document.getElementById('homeBtn').style.display = 'inline-block';
+    }
+
+    if (!sessionId) {
+      showError('No session ID found in URL.');
+    } else {
+      fetch('https://maixpo-api.khalidgraphy-com.workers.dev/api/payment-verify?session_id=' + encodeURIComponent(sessionId))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.paid) {
+            showSuccess();
+          } else {
+            showError('Payment not yet confirmed. If you completed checkout, please allow a moment and refresh.');
+          }
+        })
+        .catch(function() {
+          showError('Could not reach our server. If you paid, your ticket is confirmed.');
+        });
+    }
+  </script>
+</body>
+</html>

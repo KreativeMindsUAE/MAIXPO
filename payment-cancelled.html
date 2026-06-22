@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Cancelled — MAIXPO 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --black: #0a0a0a; --white: #f5f2ec; --accent: #e8ff00; --text-muted: rgba(245,242,236,0.45); --border: rgba(245,242,236,0.1); --mid: #141414; }
+    body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; margin-bottom: 60px; }
+    .logo span { color: var(--accent); }
+    .card { background: var(--mid); border: 1px solid var(--border); padding: 56px 48px; max-width: 520px; width: 100%; text-align: center; }
+    .icon { font-size: 52px; margin-bottom: 20px; color: var(--text-muted); }
+    .tag { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+    h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .sub { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 32px; }
+    .info-box { background: rgba(245,242,236,0.03); border: 1px solid var(--border); padding: 22px 24px; font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-bottom: 36px; }
+    .info-box strong { color: var(--white); }
+    .btn { display: inline-block; background: var(--accent); color: var(--black); font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; padding: 16px 36px; transition: opacity 0.2s; margin-right: 12px; margin-bottom: 12px; }
+    .btn:hover { opacity: 0.85; }
+    .btn-outline { background: none; border: 1px solid var(--border); color: var(--white); }
+    .btn-outline:hover { border-color: var(--white); opacity: 1; }
+    @media (max-width: 560px) { .card { padding: 40px 24px; } }
+  </style>
+</head>
+<body>
+  <div class="logo">MAI<span>XPO</span></div>
+  <div class="card">
+    <div class="icon">&#8592;</div>
+    <div class="tag">Payment not completed</div>
+    <h1>No payment was taken</h1>
+    <p class="sub">You cancelled before completing payment. Your registration details have been saved - no charge was made.</p>
+    <div class="info-box">
+      <strong>Early bird pricing is still available.</strong><br>
+      Your spot is not reserved until payment is confirmed. Return to the tickets page to complete your purchase before early bird seats sell out.
+    </div>
+    <a href="https://maixpo.com/#tickets" class="btn">Return to Tickets</a>
+    <a href="mailto:hello@maixpo.com" class="btn btn-outline">Contact Us</a>
+  </div>
+</body>
+</html>
