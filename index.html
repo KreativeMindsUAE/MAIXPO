@@ -86,12 +86,13 @@
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border);
   }
-  .nav-logo img { height: 34px; width: auto; display: block; }
   .nav-logo {
+    display: flex; align-items: center; gap: 10px;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px; letter-spacing: 3px;
+    font-size: 26px; letter-spacing: 3px;
     color: var(--white); text-decoration: none;
   }
+  .nav-logo img { height: 32px; width: auto; display: block; flex-shrink: 0; }
   .nav-logo span { color: var(--accent); }
   .nav-links { display: flex; gap: 32px; align-items: center; }
   .nav-links a {
@@ -482,7 +483,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo"><img src="img/logo1.png" alt="MAIXPO"></a>
+  <a href="#" class="nav-logo"><img src="img/icon1.png" alt="MAIXPO icon">MAIX<span>PO</span></a>
   <div class="nav-links">
     <a href="#cities">Cities</a>
     <a href="#agenda">Agenda</a>
