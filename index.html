@@ -93,7 +93,8 @@
     color: var(--white); text-decoration: none;
   }
   .nav-logo img { height: 32px; width: auto; display: block; flex-shrink: 0; }
-  .nav-logo span { color: var(--accent); }
+  .nav-wordmark { line-height: 1; }
+  .nav-logo .accent { color: var(--accent); }
   .nav-links { display: flex; gap: 32px; align-items: center; }
   .nav-links a {
     color: var(--text-muted); text-decoration: none;
@@ -483,7 +484,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo"><img src="img/icon1.png" alt="MAIXPO icon">MAIX<span>PO</span></a>
+  <a href="#" class="nav-logo"><img src="img/icon1.png" alt="MAIXPO icon"><span class="nav-wordmark">MAI<span class="accent">XPO</span></span></a>
   <div class="nav-links">
     <a href="#cities">Cities</a>
     <a href="#agenda">Agenda</a>
@@ -506,7 +507,7 @@
   </div>
 
   <h1 class="hero-title">
-    MAIX<span class="accent">PO</span><br>
+    MAI<span class="accent">XPO</span><br>
     <span class="outline">KL + DUBAI</span><br>
     2026
   </h1>
