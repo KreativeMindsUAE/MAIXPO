@@ -35,8 +35,8 @@ const VALID_HEAR = ['social', 'colleague', 'google', 'email', 'other'];
 
 // ── STRIPE ────────────────────────────────────────────────────────────────────
 
-async function stripeCreateCheckout(env, { email, name, tier, city, registrationId }) {
-  const amount = STRIPE_PRICES[tier];
+async function stripeCreateCheckout(env, { email, name, tier, city, registrationId, amountOverride }) {
+  const amount = amountOverride ?? STRIPE_PRICES[tier];
   if (!amount) throw new Error('Invalid tier for Stripe');
   const productName = STRIPE_NAMES[tier] + ' — ' + city;
   const params = new URLSearchParams();
@@ -523,6 +523,42 @@ export default {
       }
     }
 
+    // ── Promo code validation ──────────────────────────────────────────────
+    if (request.method === 'POST' && url.pathname === '/api/validate-promo') {
+      let body;
+      try { body = await request.json(); } catch { return json({ valid: false, error: 'Invalid JSON' }, 400, origin); }
+      const code = (body.code || '').trim().toUpperCase();
+      const tier = body.tier;
+      if (!code) return json({ valid: false, error: 'No code provided' }, 400, origin);
+      if (!VALID_TIERS.includes(tier)) return json({ valid: false, error: 'Invalid tier' }, 400, origin);
+
+      const row = await env.DB.prepare(
+        `SELECT code, discount_pct, max_uses, active FROM promo_codes WHERE code=?`
+      ).bind(code).first();
+
+      if (!row || !row.active) return json({ valid: false, error: 'Invalid or expired promo code' }, 200, origin);
+
+      if (row.max_uses) {
+        const usage = await env.DB.prepare(
+          `SELECT COUNT(*) as cnt FROM registrations WHERE promo_code=? AND payment_status='paid'`
+        ).bind(row.code).first();
+        if ((usage?.cnt || 0) >= row.max_uses) {
+          return json({ valid: false, error: 'This promo code has reached its usage limit' }, 200, origin);
+        }
+      }
+
+      const baseAmount = STRIPE_PRICES[tier];
+      const discountAmt = Math.floor(baseAmount * row.discount_pct / 100);
+      const finalAmount = baseAmount - discountAmt;
+      return json({
+        valid: true,
+        code: row.code,
+        discount_pct: row.discount_pct,
+        original_amount: baseAmount,
+        final_amount: finalAmount,
+      }, 200, origin);
+    }
+
     // ── Registration ───────────────────────────────────────────────────────
     if (request.method === 'POST' && url.pathname === '/api/register') {
       let body;
@@ -532,35 +568,63 @@ export default {
         return json({ error: 'Invalid JSON' }, 400, origin);
       }
 
-      const { city, ticket_tier, full_name, email, company, job_title, industry, ai_stage, goals, hear_about } = body;
+      const { city, ticket_tier, full_name, email, company, job_title, industry, ai_stage, goals, hear_about, promo_code } = body;
 
       if (!full_name?.trim()) return json({ error: 'Full name is required' }, 400, origin);
       if (!email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: 'Valid email is required' }, 400, origin);
-      if (!company?.trim()) return json({ error: 'Company is required' }, 400, origin);
-      if (!job_title?.trim()) return json({ error: 'Job title is required' }, 400, origin);
       if (!VALID_TIERS.includes(ticket_tier)) return json({ error: 'Invalid ticket tier' }, 400, origin);
       if (!VALID_CITIES.includes(city)) return json({ error: 'Invalid city' }, 400, origin);
-      if (!VALID_INDUSTRIES.includes(industry)) return json({ error: 'Invalid industry' }, 400, origin);
 
+      const safeCompany = company?.trim() || null;
+      const safeJobTitle = job_title?.trim() || null;
+      const safeIndustry = VALID_INDUSTRIES.includes(industry) ? industry : null;
       const safeAiStage = VALID_AI_STAGES.includes(ai_stage) ? ai_stage : null;
       const goalsArr = Array.isArray(goals) ? goals.filter(g => VALID_GOALS.includes(g)) : [];
       const safeHear = VALID_HEAR.includes(hear_about) ? hear_about : null;
 
+      // Validate promo code if provided
+      let appliedPromoCode = null;
+      let promoDiscountPct = null;
+      let finalAmount = STRIPE_PRICES[ticket_tier];
+
+      if (promo_code?.trim()) {
+        const promoRow = await env.DB.prepare(
+          `SELECT code, discount_pct, max_uses, active FROM promo_codes WHERE code=?`
+        ).bind(promo_code.trim().toUpperCase()).first();
+
+        if (promoRow && promoRow.active) {
+          let withinLimit = true;
+          if (promoRow.max_uses) {
+            const usage = await env.DB.prepare(
+              `SELECT COUNT(*) as cnt FROM registrations WHERE promo_code=? AND payment_status='paid'`
+            ).bind(promoRow.code).first();
+            if ((usage?.cnt || 0) >= promoRow.max_uses) withinLimit = false;
+          }
+          if (withinLimit) {
+            appliedPromoCode = promoRow.code;
+            promoDiscountPct = promoRow.discount_pct;
+            finalAmount = finalAmount - Math.floor(finalAmount * promoRow.discount_pct / 100);
+          }
+        }
+      }
+
       try {
         const result = await env.DB.prepare(
-          `INSERT INTO registrations (city, ticket_tier, full_name, email, company, job_title, industry, ai_stage, goals, hear_about)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          `INSERT INTO registrations (city, ticket_tier, full_name, email, company, job_title, industry, ai_stage, goals, hear_about, promo_code, promo_discount_pct)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         ).bind(
           city,
           ticket_tier,
           full_name.trim(),
           email.trim().toLowerCase(),
-          company.trim(),
-          job_title.trim(),
-          industry,
+          safeCompany,
+          safeJobTitle,
+          safeIndustry,
           safeAiStage,
           goalsArr.join(',') || null,
-          safeHear
+          safeHear,
+          appliedPromoCode,
+          promoDiscountPct
         ).run();
 
         const registrationId = result.meta.last_row_id;
@@ -573,6 +637,7 @@ export default {
             tier: ticket_tier,
             city,
             registrationId,
+            amountOverride: finalAmount,
           });
           checkout_url = session.url;
           await env.DB.prepare(`UPDATE registrations SET stripe_session_id=? WHERE id=?`)
