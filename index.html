@@ -478,6 +478,112 @@
     .expo-photo { height: 220px; }
     .venue-photo { min-height: 220px; }
   }
+
+  /* REGISTRATION MODAL */
+  .reg-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(8,8,8,0.88);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .reg-overlay.open { display: flex; }
+  .reg-modal {
+    background: #111; border: 1px solid var(--border);
+    max-width: 560px; width: 100%;
+    max-height: 92vh; overflow-y: auto;
+    padding: 48px 44px; position: relative;
+  }
+  .reg-close {
+    position: absolute; top: 20px; right: 20px;
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted); font-size: 28px; line-height: 1;
+    transition: color 0.2s; padding: 0;
+  }
+  .reg-close:hover { color: var(--white); }
+  .reg-progress { display: flex; gap: 6px; margin-bottom: 36px; }
+  .reg-progress-dot {
+    height: 3px; flex: 1; background: var(--border); transition: background 0.3s;
+  }
+  .reg-progress-dot.active { background: var(--accent); }
+  .reg-step { display: none; }
+  .reg-step.active { display: block; }
+  .reg-step-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 8px;
+  }
+  .reg-title {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800;
+    margin-bottom: 8px; line-height: 1.2;
+  }
+  .reg-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+  .reg-tier-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(232,255,0,0.08); border: 1px solid rgba(232,255,0,0.2);
+    color: var(--accent); font-size: 11px; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 6px 14px; margin-bottom: 28px;
+  }
+  .reg-field { margin-bottom: 18px; }
+  .reg-label {
+    display: block; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 7px;
+  }
+  .reg-input, .reg-select {
+    width: 100%; background: rgba(245,242,236,0.04);
+    border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 300;
+    padding: 13px 16px; outline: none; transition: border-color 0.2s;
+    -webkit-appearance: none; appearance: none; border-radius: 0;
+  }
+  .reg-input:focus, .reg-select:focus { border-color: var(--accent); }
+  .reg-input::placeholder { color: var(--text-muted); }
+  .reg-select option { background: #1a1a1a; color: var(--white); }
+  .reg-select-wrap { position: relative; }
+  .reg-select-wrap::after {
+    content: '\25BE'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); pointer-events: none;
+  }
+  .reg-goals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .reg-goal-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .reg-goal-item input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+  .reg-goal-item span { font-size: 14px; color: var(--white); }
+  .reg-btn {
+    width: 100%; padding: 17px; margin-top: 28px;
+    background: var(--accent); color: var(--black);
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    border: none; cursor: pointer; transition: opacity 0.2s; border-radius: 0;
+  }
+  .reg-btn:hover { opacity: 0.85; }
+  .reg-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .reg-btn-close { margin-top: 28px; }
+  .reg-field-spaced { margin-top: 18px; }
+  .reg-back {
+    background: none; border: none; color: var(--text-muted);
+    font-size: 13px; cursor: pointer; margin-top: 14px;
+    display: block; width: 100%; text-align: center; transition: color 0.2s;
+    padding: 0;
+  }
+  .reg-back:hover { color: var(--white); }
+  .reg-error { font-size: 13px; color: #ff5c5c; margin-top: 10px; display: none; }
+  .reg-confirm-icon { font-size: 44px; margin-bottom: 12px; color: var(--accent); }
+  .reg-confirm-note {
+    background: rgba(232,255,0,0.05); border: 1px solid rgba(232,255,0,0.15);
+    padding: 20px; margin-top: 28px;
+    font-size: 13px; color: var(--text-muted); line-height: 1.7;
+  }
+  .reg-confirm-note strong { color: var(--white); }
+  .reg-payment-placeholder {
+    margin-top: 20px; padding: 18px;
+    border: 1px dashed var(--border); text-align: center;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  @media (max-width: 600px) {
+    .reg-modal { padding: 36px 24px; }
+    .reg-goals { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -533,8 +639,7 @@
       <span class="hero-date-val">Hybrid &mdash; Physical + Virtual</span>
     </div>
     <div class="hero-cta-group">
-      <!-- Replace PAYLINK-EB with your actual Payxem pay-link code for Early Bird ticket -->
-      <a href="https://pxem.link/PAYLINK-EB" class="btn-primary" target="_blank" rel="noopener">Get Early Bird Ticket</a>
+      <a href="#tickets" class="btn-primary" onclick="event.preventDefault();openRegModal('KL','early_bird','Early Bird Standard')">Get Early Bird Ticket</a>
       <a href="#cities" class="btn-secondary">Explore Both Cities</a>
     </div>
   </div>
@@ -978,8 +1083,7 @@
           <li><span class="tick">&#10003;</span> Speaker materials &amp; resources</li>
           <li><span class="tick">&#10003;</span> Certificate of attendance</li>
         </ul>
-        <!-- Replace PAYLINK-KL-EB with actual Payxem pay-link for KL Early Bird $35 -->
-        <a href="https://pxem.link/PAYLINK-KL-EB" class="ticket-btn ticket-btn-dark" target="_blank" rel="noopener">Register &mdash; Early Bird</a>
+        <a href="#" class="ticket-btn ticket-btn-dark" onclick="event.preventDefault();openRegModal('KL','early_bird','Early Bird Standard')">Register &mdash; Early Bird</a>
       </div>
 
       <div class="ticket-card featured">
@@ -996,8 +1100,7 @@
           <li><span class="tick">&#10003;</span> Speaker materials &amp; resources</li>
           <li><span class="tick">&#10003;</span> Certificate of attendance</li>
         </ul>
-        <!-- Replace PAYLINK-KL-STD with actual Payxem pay-link for KL Standard $50 -->
-        <a href="https://pxem.link/PAYLINK-KL-STD" class="ticket-btn ticket-btn-outline" target="_blank" rel="noopener">Register Now</a>
+        <a href="#" class="ticket-btn ticket-btn-outline" onclick="event.preventDefault();openRegModal('KL','standard','Standard')">Register Now</a>
       </div>
 
       <div class="ticket-card">
@@ -1014,8 +1117,7 @@
           <li><span class="tick">&#10003;</span> Exclusive speaker lunch (Day 1)</li>
           <li><span class="tick">&#10003;</span> VIP badge &amp; premium event kit</li>
         </ul>
-        <!-- Replace PAYLINK-KL-VIP with actual Payxem pay-link for KL VIP Early Bird $50 -->
-        <a href="https://pxem.link/PAYLINK-KL-VIP" class="ticket-btn ticket-btn-dark" target="_blank" rel="noopener">Register &mdash; VIP Early Bird</a>
+        <a href="#" class="ticket-btn ticket-btn-dark" onclick="event.preventDefault();openRegModal('KL','vip','VIP Early Bird')">Register &mdash; VIP Early Bird</a>
       </div>
 
     </div>
@@ -1305,8 +1407,7 @@
   <h2>Join MAIXPO<br>2026</h2>
   <p>KL in September. Dubai date TBA. The region's AI marketing event of the year &mdash; two chances to be in the room.</p>
   <div class="cta-band-buttons">
-    <!-- Replace PAYLINK-KL-EB with actual Payxem pay-link for Early Bird ticket -->
-    <a href="https://pxem.link/PAYLINK-KL-EB" class="btn-dark" target="_blank" rel="noopener">Get KL Ticket &mdash; Early Bird</a>
+    <a href="#" class="btn-dark" onclick="event.preventDefault();openRegModal('KL','early_bird','Early Bird Standard')">Get KL Ticket &mdash; Early Bird</a>
     <a href="mailto:sponsors@maixpo.com" class="btn-outline-dark">Sponsor &amp; Exhibit</a>
   </div>
 </div>
@@ -1365,12 +1466,216 @@
   </div>
 </footer>
 
+<!-- REGISTRATION MODAL -->
+<div class="reg-overlay" id="regOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="reg-modal" role="dialog" aria-modal="true" aria-label="Registration form">
+    <button type="button" class="reg-close" onclick="closeModal()" aria-label="Close">&times;</button>
+
+    <div class="reg-progress">
+      <div class="reg-progress-dot active" id="regDot1"></div>
+      <div class="reg-progress-dot" id="regDot2"></div>
+    </div>
+
+    <!-- Step 1: Contact -->
+    <div class="reg-step active" id="regStep1">
+      <div class="reg-step-label">Step 1 of 2 &mdash; Your Details</div>
+      <h2 class="reg-title">Register for MAIXPO</h2>
+      <p class="reg-subtitle">Join marketers, AI practitioners and brand leaders at the region's premier AI marketing event.</p>
+      <div class="reg-tier-badge" id="regTierBadge">Early Bird Standard &mdash; KL</div>
+      <div class="reg-field">
+        <label class="reg-label" for="regName">Full Name</label>
+        <input class="reg-input" id="regName" type="text" placeholder="Your full name" autocomplete="name">
+      </div>
+      <div class="reg-field">
+        <label class="reg-label" for="regEmail">Work Email</label>
+        <input class="reg-input" id="regEmail" type="email" placeholder="you@company.com" autocomplete="email">
+      </div>
+      <div class="reg-field">
+        <label class="reg-label" for="regCompany">Company</label>
+        <input class="reg-input" id="regCompany" type="text" placeholder="Your company or brand" autocomplete="organization">
+      </div>
+      <div class="reg-field">
+        <label class="reg-label" for="regJobTitle">Job Title</label>
+        <input class="reg-input" id="regJobTitle" type="text" placeholder="e.g. Head of Marketing" autocomplete="organization-title">
+      </div>
+      <div class="reg-field">
+        <label class="reg-label" for="regIndustry">Industry</label>
+        <div class="reg-select-wrap">
+          <select class="reg-select" id="regIndustry">
+            <option value="">Select your industry</option>
+            <option value="agency">Marketing Agency</option>
+            <option value="brand">Brand / Corporate</option>
+            <option value="saas">SaaS / Technology</option>
+            <option value="consulting">Consulting</option>
+            <option value="media">Media / Publishing</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="reg-error" id="regErr1"></div>
+      <button type="button" class="reg-btn" onclick="regGoStep2()">Continue</button>
+    </div>
+
+    <!-- Step 2: Preferences -->
+    <div class="reg-step" id="regStep2">
+      <div class="reg-step-label">Step 2 of 2 &mdash; Your Profile</div>
+      <h2 class="reg-title">Almost there</h2>
+      <p class="reg-subtitle">Helps us match you with the right sessions and connections at the event.</p>
+      <div class="reg-field">
+        <label class="reg-label" for="regAiStage">Your AI adoption stage</label>
+        <div class="reg-select-wrap">
+          <select class="reg-select" id="regAiStage">
+            <option value="">Select one</option>
+            <option value="not_yet">Not using AI yet</option>
+            <option value="exploring">Exploring and testing</option>
+            <option value="using">Actively using in workflows</option>
+          </select>
+        </div>
+      </div>
+      <div class="reg-field">
+        <label class="reg-label">Primary goals at MAIXPO (select all that apply)</label>
+        <div class="reg-goals">
+          <label class="reg-goal-item"><input type="checkbox" value="learn"><span>Learn new skills</span></label>
+          <label class="reg-goal-item"><input type="checkbox" value="network"><span>Network &amp; connect</span></label>
+          <label class="reg-goal-item"><input type="checkbox" value="hire"><span>Hire or find talent</span></label>
+          <label class="reg-goal-item"><input type="checkbox" value="vendors"><span>Find tools &amp; vendors</span></label>
+          <label class="reg-goal-item"><input type="checkbox" value="invest"><span>Explore investment</span></label>
+        </div>
+      </div>
+      <div class="reg-field reg-field-spaced">
+        <label class="reg-label" for="regHear">How did you hear about MAIXPO?</label>
+        <div class="reg-select-wrap">
+          <select class="reg-select" id="regHear">
+            <option value="">Select one</option>
+            <option value="social">Social media</option>
+            <option value="colleague">Colleague / referral</option>
+            <option value="google">Google search</option>
+            <option value="email">Email / newsletter</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="reg-error" id="regErr2"></div>
+      <button type="button" class="reg-btn" id="regSubmitBtn" onclick="regSubmit()">Complete Registration</button>
+      <button type="button" class="reg-back" onclick="regGoStep1()">&#8592; Back</button>
+    </div>
+
+    <!-- Step 3: Confirmation -->
+    <div class="reg-step" id="regStep3">
+      <div class="reg-confirm-icon">&#10003;</div>
+      <div class="reg-step-label">You're in</div>
+      <h2 class="reg-title">Registration received!</h2>
+      <p class="reg-subtitle">Your spot is reserved. We'll be in touch with event details and payment instructions shortly.</p>
+      <div class="reg-confirm-note">
+        <strong>What happens next?</strong><br>
+        Our team will send payment details to your email within 24 hours. Once payment is confirmed, you'll receive your official ticket and attendee welcome pack.
+      </div>
+      <div class="reg-payment-placeholder">Secure online payment &mdash; coming soon</div>
+      <button type="button" class="reg-btn reg-btn-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function showCity(city, btn) {
   document.getElementById('tickets-kl').style.display = city === 'kl' ? 'block' : 'none';
   document.getElementById('tickets-dubai').style.display = city === 'dubai' ? 'block' : 'none';
   document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
+}
+
+// Registration modal
+var _regCity = 'KL', _regTier = 'early_bird';
+
+function openRegModal(city, tier, label) {
+  _regCity = city;
+  _regTier = tier;
+  document.getElementById('regTierBadge').textContent = label + ' — ' + city;
+  regSetStep(1);
+  document.getElementById('regOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('regOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function regSetStep(n) {
+  [1, 2, 3].forEach(function(i) {
+    document.getElementById('regStep' + i).classList.toggle('active', i === n);
+  });
+  document.getElementById('regDot1').classList.toggle('active', n >= 1);
+  document.getElementById('regDot2').classList.toggle('active', n >= 2);
+}
+
+function regShowErr(id, msg) {
+  var el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function regGoStep1() {
+  document.getElementById('regErr2').style.display = 'none';
+  regSetStep(1);
+}
+
+function regGoStep2() {
+  var name = document.getElementById('regName').value.trim();
+  var email = document.getElementById('regEmail').value.trim();
+  var company = document.getElementById('regCompany').value.trim();
+  var jobTitle = document.getElementById('regJobTitle').value.trim();
+  var industry = document.getElementById('regIndustry').value;
+  document.getElementById('regErr1').style.display = 'none';
+  if (!name) { regShowErr('regErr1', 'Please enter your full name.'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { regShowErr('regErr1', 'Please enter a valid email address.'); return; }
+  if (!company) { regShowErr('regErr1', 'Please enter your company name.'); return; }
+  if (!jobTitle) { regShowErr('regErr1', 'Please enter your job title.'); return; }
+  if (!industry) { regShowErr('regErr1', 'Please select your industry.'); return; }
+  regSetStep(2);
+}
+
+function regSubmit() {
+  var btn = document.getElementById('regSubmitBtn');
+  document.getElementById('regErr2').style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  var goals = Array.from(document.querySelectorAll('.reg-goals input[type=checkbox]:checked')).map(function(c) { return c.value; });
+
+  var payload = {
+    city: _regCity,
+    ticket_tier: _regTier,
+    full_name: document.getElementById('regName').value.trim(),
+    email: document.getElementById('regEmail').value.trim(),
+    company: document.getElementById('regCompany').value.trim(),
+    job_title: document.getElementById('regJobTitle').value.trim(),
+    industry: document.getElementById('regIndustry').value,
+    ai_stage: document.getElementById('regAiStage').value || null,
+    goals: goals,
+    hear_about: document.getElementById('regHear').value || null
+  };
+
+  fetch('https://maixpo-api.khalidgraphy-com.workers.dev/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.success) {
+      regSetStep(3);
+    } else {
+      regShowErr('regErr2', data.error || 'Something went wrong. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Complete Registration';
+    }
+  })
+  .catch(function() {
+    regShowErr('regErr2', 'Connection error. Please check your internet and try again.');
+    btn.disabled = false;
+    btn.textContent = 'Complete Registration';
+  });
 }
 </script>
 
