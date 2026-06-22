@@ -339,6 +339,15 @@
   .ticket-btn-outline:hover { background: rgba(0,0,0,0.1); }
   .ticket-btn-white { border: 1px solid var(--border); color: var(--white); }
   .ticket-btn-white:hover { border-color: var(--white); }
+  .ticket-cents { font-size: 32px; vertical-align: top; margin-top: 18px; display: inline-block; }
+  .ticket-was { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .ticket-was-price { font-size: 18px; text-decoration: line-through; opacity: 0.45; }
+  .ticket-off-badge { font-size: 11px; font-weight: 700; letter-spacing: 1px; background: rgba(232,255,0,0.18); color: var(--accent); padding: 3px 10px; }
+  .ticket-card.featured .ticket-off-badge { background: rgba(0,0,0,0.15); color: var(--black); }
+  .ticket-card.featured .ticket-was-price { color: var(--black); }
+  .ticket-group { display: flex; flex-direction: column; justify-content: center; text-align: center; min-height: 420px; }
+  .ticket-group-qty { font-family: 'Bebas Neue', sans-serif; font-size: 56px; letter-spacing: 3px; color: var(--accent); line-height: 1; margin: 20px 0 16px; }
+  .ticket-group-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 32px; }
   .ticket-dubai-coming {
     grid-column: 1 / -1; padding: 60px 40px; text-align: center;
     background: var(--mid); border: 1px dashed rgba(245,242,236,0.15);
@@ -639,7 +648,7 @@
       <span class="hero-date-val">Hybrid &mdash; Physical + Virtual</span>
     </div>
     <div class="hero-cta-group">
-      <a href="#tickets" class="btn-primary" onclick="event.preventDefault();openRegModal('KL','early_bird','Early Bird Standard')">Get Early Bird Ticket</a>
+      <a href="#tickets" class="btn-primary" onclick="event.preventDefault();openRegModal('KL','standard','Standard Early Bird')">Get Early Bird Ticket</a>
       <a href="#cities" class="btn-secondary">Explore Both Cities</a>
     </div>
   </div>
@@ -1070,10 +1079,11 @@
     <div class="tickets-grid">
 
       <div class="ticket-card">
-        <div class="ticket-badge"><svg class="svg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2 4 13h7l-1 9 9-11h-7z"/></svg> Early Bird &mdash; Limited Availability</div>
+        <div class="ticket-badge"><svg class="svg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2 4 13h7l-1 9 9-11h-7z"/></svg> Early Bird &mdash; Limited Seats</div>
         <div class="ticket-type">Standard</div>
-        <div class="ticket-price"><sup>$</sup>35 <span class="regular">$50</span></div>
-        <div class="ticket-rm">RM 140 &middot; Save $15</div>
+        <div class="ticket-price"><sup>$</sup>39<span class="ticket-cents">.99</span></div>
+        <div class="ticket-was"><span class="ticket-was-price">$99.99</span><span class="ticket-off-badge">60% OFF</span></div>
+        <div class="ticket-rm">RM 185 &middot; Early bird saving $60</div>
         <div class="ticket-limit"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Limited availability &mdash; ends when sold</div>
         <ul class="ticket-features">
           <li><span class="tick">&#10003;</span> Full 2-day access &mdash; all keynotes &amp; panels</li>
@@ -1083,31 +1093,15 @@
           <li><span class="tick">&#10003;</span> Speaker materials &amp; resources</li>
           <li><span class="tick">&#10003;</span> Certificate of attendance</li>
         </ul>
-        <a href="#" class="ticket-btn ticket-btn-dark" onclick="event.preventDefault();openRegModal('KL','early_bird','Early Bird Standard')">Register &mdash; Early Bird</a>
+        <a href="#" class="ticket-btn ticket-btn-dark" onclick="event.preventDefault();openRegModal('KL','standard','Standard Early Bird')">Register &mdash; $39.99</a>
       </div>
 
       <div class="ticket-card featured">
-        <div class="ticket-badge">Most Popular</div>
-        <div class="ticket-type">Standard</div>
-        <div class="ticket-price"><sup>$</sup>50</div>
-        <div class="ticket-rm">RM 200 &middot; General admission</div>
-        <div class="ticket-limit">Open registration</div>
-        <ul class="ticket-features">
-          <li><span class="tick">&#10003;</span> Full 2-day access &mdash; all keynotes &amp; panels</li>
-          <li><span class="tick">&#10003;</span> Expo floor access</li>
-          <li><span class="tick">&#10003;</span> 2 workshop sessions of your choice</li>
-          <li><span class="tick">&#10003;</span> Networking lunch both days</li>
-          <li><span class="tick">&#10003;</span> Speaker materials &amp; resources</li>
-          <li><span class="tick">&#10003;</span> Certificate of attendance</li>
-        </ul>
-        <a href="#" class="ticket-btn ticket-btn-outline" onclick="event.preventDefault();openRegModal('KL','standard','Standard')">Register Now</a>
-      </div>
-
-      <div class="ticket-card">
-        <div class="ticket-badge"><svg class="svg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2 4 13h7l-1 9 9-11h-7z"/></svg> VIP Early Bird &mdash; Limited Availability</div>
+        <div class="ticket-badge"><svg class="svg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg> VIP Early Bird &mdash; Premium Access</div>
         <div class="ticket-type">VIP / Executive</div>
-        <div class="ticket-price"><sup>$</sup>50 <span class="regular">$100</span></div>
-        <div class="ticket-rm">RM 200 &middot; VIP at Standard price</div>
+        <div class="ticket-price"><sup>$</sup>99<span class="ticket-cents">.99</span></div>
+        <div class="ticket-was"><span class="ticket-was-price">$199.99</span><span class="ticket-off-badge">50% OFF</span></div>
+        <div class="ticket-rm">RM 465 &middot; Early bird saving $100</div>
         <div class="ticket-limit"><svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Limited availability &mdash; selling fast</div>
         <ul class="ticket-features">
           <li><span class="tick">&#10003;</span> Everything in Standard</li>
@@ -1117,12 +1111,20 @@
           <li><span class="tick">&#10003;</span> Exclusive speaker lunch (Day 1)</li>
           <li><span class="tick">&#10003;</span> VIP badge &amp; premium event kit</li>
         </ul>
-        <a href="#" class="ticket-btn ticket-btn-dark" onclick="event.preventDefault();openRegModal('KL','vip','VIP Early Bird')">Register &mdash; VIP Early Bird</a>
+        <a href="#" class="ticket-btn ticket-btn-outline" onclick="event.preventDefault();openRegModal('KL','vip','VIP Early Bird')">Register &mdash; $99.99</a>
+      </div>
+
+      <div class="ticket-card ticket-group">
+        <div class="ticket-badge">Group Discount</div>
+        <div class="ticket-type">Group</div>
+        <div class="ticket-group-qty">3+ Tickets</div>
+        <p class="ticket-group-desc">Bringing your team? Get preferential group rates for 3 or more attendees from the same organisation.</p>
+        <a href="mailto:hello@maixpo.com?subject=Group%20Booking%20Enquiry%20%E2%80%94%20MAIXPO%202026" class="ticket-btn ticket-btn-white">Contact Us for Group Rate</a>
       </div>
 
     </div>
     <p style="margin-top:32px; font-size:13px; color:var(--text-muted); text-align:center;">
-      Full refund guaranteed if event does not proceed. Group bookings (5+) available &mdash; contact <a href="mailto:hello@maixpo.com" style="color:var(--accent)">hello@maixpo.com</a>
+      Full refund guaranteed if event does not proceed. Secure checkout powered by Stripe.
     </p>
   </div>
 
@@ -1407,7 +1409,7 @@
   <h2>Join MAIXPO<br>2026</h2>
   <p>KL in September. Dubai date TBA. The region's AI marketing event of the year &mdash; two chances to be in the room.</p>
   <div class="cta-band-buttons">
-    <a href="#" class="btn-dark" onclick="event.preventDefault();openRegModal('KL','early_bird','Early Bird Standard')">Get KL Ticket &mdash; Early Bird</a>
+    <a href="#" class="btn-dark" onclick="event.preventDefault();openRegModal('KL','standard','Standard Early Bird')">Get KL Ticket &mdash; Early Bird</a>
     <a href="mailto:sponsors@maixpo.com" class="btn-outline-dark">Sponsor &amp; Exhibit</a>
   </div>
 </div>
@@ -1556,7 +1558,7 @@
         </div>
       </div>
       <div class="reg-error" id="regErr2"></div>
-      <button type="button" class="reg-btn" id="regSubmitBtn" onclick="regSubmit()">Complete Registration</button>
+      <button type="button" class="reg-btn" id="regSubmitBtn" onclick="regSubmit()">Proceed to Payment</button>
       <button type="button" class="reg-back" onclick="regGoStep1()">&#8592; Back</button>
     </div>
 
@@ -1585,7 +1587,7 @@ function showCity(city, btn) {
 }
 
 // Registration modal
-var _regCity = 'KL', _regTier = 'early_bird';
+var _regCity = 'KL', _regTier = 'standard';
 
 function openRegModal(city, tier, label) {
   _regCity = city;
@@ -1663,18 +1665,19 @@ function regSubmit() {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    if (data.success) {
-      regSetStep(3);
+    if (data.success && data.checkout_url) {
+      btn.textContent = 'Redirecting to payment…';
+      window.location.href = data.checkout_url;
     } else {
       regShowErr('regErr2', data.error || 'Something went wrong. Please try again.');
       btn.disabled = false;
-      btn.textContent = 'Complete Registration';
+      btn.textContent = 'Proceed to Payment';
     }
   })
   .catch(function() {
     regShowErr('regErr2', 'Connection error. Please check your internet and try again.');
     btn.disabled = false;
-    btn.textContent = 'Complete Registration';
+    btn.textContent = 'Proceed to Payment';
   });
 }
 </script>
