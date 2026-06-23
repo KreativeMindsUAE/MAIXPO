@@ -231,7 +231,18 @@
   .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; align-items: start; }
   .about-text p { font-size: 17px; line-height: 1.8; color: rgba(245,242,236,0.75); margin-bottom: 20px; }
   .about-text p strong { color: var(--white); font-weight: 500; }
-  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+  .about-stats .stat:last-child:nth-child(3n+1) { grid-column: 1 / -1; }
+  .about-stats .stat:nth-last-child(2):nth-child(3n+1) { grid-column: span 1; }
+  /* 5-stat layout: row1=3, row2=2 centered */
+  @media (min-width: 769px) {
+    .about-stats { grid-template-columns: repeat(6, 1fr); }
+    .about-stats .stat:nth-child(1),
+    .about-stats .stat:nth-child(2),
+    .about-stats .stat:nth-child(3) { grid-column: span 2; }
+    .about-stats .stat:nth-child(4) { grid-column: 2 / span 2; }
+    .about-stats .stat:nth-child(5) { grid-column: 4 / span 2; }
+  }
   .stat { background: var(--mid); padding: 32px 28px; position: relative; overflow: hidden; }
   .stat::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
   .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 52px; letter-spacing: 2px; color: var(--accent); line-height: 1; }
@@ -472,6 +483,9 @@
     section { padding: 70px 20px; }
     .hero { padding: 0 20px 60px; }
     .about-grid, .venue-grid, .faq-grid { grid-template-columns: 1fr; gap: 40px; }
+    .about-stats { grid-template-columns: 1fr 1fr !important; }
+    .about-stats .stat:nth-child(4) { grid-column: span 1 !important; }
+    .about-stats .stat:nth-child(5) { grid-column: span 1 !important; }
     .why-grid, .tickets-grid, .exhibitors-grid, .sponsors-tiers { grid-template-columns: 1fr; }
     .speakers-grid { grid-template-columns: 1fr 1fr; }
     .agenda-days { grid-template-columns: 1fr; }
@@ -735,7 +749,7 @@
       <div class="city-date">September 2026</div>
       <div class="city-date-note">Exact dates confirming soon &mdash; mid-September</div>
       <div class="city-desc">
-        KL is SEA's most accessible conference hub &mdash; easy visa for 160+ countries, world-class venues, and a city that knows how to host a serious event. MAIXPO KL brings together 10,000+ marketing professionals from across SEA, the GCC, and South Asia, combining a major in-person conference with a global virtual audience.
+        KL is SEA's most accessible conference hub &mdash; easy visa for 160+ countries, world-class venues, and a city that knows how to host a serious event. MAIXPO KL brings together 6,500+ attendees from across SEA, the GCC, and South Asia, combining a major in-person conference with a global virtual audience.
       </div>
       <div class="city-facts">
         <div>
@@ -800,20 +814,24 @@
 
     <div class="about-stats">
       <div class="stat">
-        <div class="stat-num">2000+</div>
-        <div class="stat-label">Marketing professionals targeted across both cities and virtual</div>
+        <div class="stat-num">6500+</div>
+        <div class="stat-label">Total audience across both cities and virtual</div>
       </div>
       <div class="stat">
-        <div class="stat-num">30+</div>
-        <div class="stat-label">Speakers &mdash; CMOs, AI leads, founders &amp; strategists per city</div>
+        <div class="stat-num">500</div>
+        <div class="stat-label">Business visitors (B2B) per city</div>
       </div>
       <div class="stat">
-        <div class="stat-num">2</div>
-        <div class="stat-label">Cities across SEA and GCC &mdash; one connected series</div>
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Exhibitors showcasing AI tools, platforms &amp; martech</div>
       </div>
       <div class="stat">
-        <div class="stat-num">20+</div>
-        <div class="stat-label">Exhibiting AI tools, platforms &amp; martech companies per city</div>
+        <div class="stat-num">50+</div>
+        <div class="stat-label">Speakers &mdash; CMOs, AI leads, founders &amp; strategists</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Countries represented across both editions</div>
       </div>
     </div>
   </div>
