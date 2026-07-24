@@ -41,6 +41,9 @@ a{color:var(--accent);text-decoration:none}
 .auth-msg.success{color:var(--accent)}
 .auth-back{font-size:12px;color:var(--muted);cursor:pointer;margin-top:12px;display:inline-block}
 .auth-back:hover{color:var(--text)}
+.auth-warn{background:rgba(255,77,0,0.07);border:1px solid rgba(255,77,0,0.22);padding:14px 16px;margin-bottom:20px;border-radius:var(--radius)}
+.auth-warn-title{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:5px}
+.auth-warn-text{font-size:11px;color:rgba(245,242,236,0.45);line-height:1.65}
 
 /* APP SHELL */
 #app{display:none;min-height:100vh;flex-direction:column}
@@ -130,7 +133,18 @@ tr:hover td{background:rgba(245,242,236,0.02)}
   <div class="auth-box">
     <div class="auth-logo">MAI<span>XPO</span> <span style="font-size:11px;letter-spacing:2px;color:var(--muted)">ADMIN</span></div>
 
-    <div class="auth-step active" id="step-email">
+    <div class="auth-step active" id="step-access">
+      <div class="auth-warn">
+        <div class="auth-warn-title">&#9888; Restricted Access</div>
+        <div class="auth-warn-text">This system is monitored. All access attempts are logged with IP address, network provider, and timestamp. Only authorized staff may proceed. Unauthorized access is a violation of system policy.</div>
+      </div>
+      <div class="auth-label">Access Code</div>
+      <input class="auth-input" type="password" id="inp-access" placeholder="Enter access code" autocomplete="off">
+      <button class="auth-btn" id="btn-continue-access">Continue</button>
+      <div class="auth-msg" id="msg-access"></div>
+    </div>
+
+    <div class="auth-step" id="step-email">
       <div class="auth-label">Admin Email</div>
       <input class="auth-input" type="email" id="inp-email" placeholder="your@email.com" autocomplete="email">
       <button class="auth-btn" id="btn-send-otp">Send Login Code</button>
@@ -320,6 +334,7 @@ tr:hover td{background:rgba(245,242,236,0.02)}
 const API = '${API}';
 let TOKEN = sessionStorage.getItem('maixpo_admin_token') || '';
 let ADMIN_EMAIL = '';
+let ACCESS_CODE = '';
 let currentRegPage = 1;
 let emailRegId = null;
 
@@ -354,6 +369,18 @@ function showApp(email) {
   loadRegistrations();
 }
 
+document.getElementById('btn-continue-access').addEventListener('click', () => {
+  const code = document.getElementById('inp-access').value.trim();
+  const msg = document.getElementById('msg-access');
+  if (!code) { msg.textContent = 'Enter the access code to continue.'; msg.className = 'auth-msg error'; return; }
+  ACCESS_CODE = code;
+  document.getElementById('step-access').classList.remove('active');
+  document.getElementById('step-email').classList.add('active');
+  msg.textContent = '';
+});
+
+document.getElementById('inp-access').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-continue-access').click(); });
+
 document.getElementById('btn-send-otp').addEventListener('click', async () => {
   const email = document.getElementById('inp-email').value.trim();
   const msg = document.getElementById('msg-email');
@@ -362,13 +389,20 @@ document.getElementById('btn-send-otp').addEventListener('click', async () => {
   btn.disabled = true; btn.textContent = 'Sending...';
   msg.textContent = ''; msg.className = 'auth-msg';
   try {
-    const r = await fetch(API + '/api/admin/send-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+    const r = await fetch(API + '/api/admin/send-otp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, access_code: ACCESS_CODE }) });
     const d = await r.json();
     if (r.ok) {
       document.getElementById('step-email').classList.remove('active');
       document.getElementById('step-otp').classList.add('active');
       document.getElementById('msg-otp').textContent = 'Code sent to ' + email;
       document.getElementById('msg-otp').className = 'auth-msg success';
+    } else if (d.error === 'Invalid access code') {
+      document.getElementById('step-email').classList.remove('active');
+      document.getElementById('step-access').classList.add('active');
+      document.getElementById('inp-access').value = '';
+      ACCESS_CODE = '';
+      document.getElementById('msg-access').textContent = 'Incorrect access code. Try again.';
+      document.getElementById('msg-access').className = 'auth-msg error';
     } else {
       msg.textContent = d.error || 'Failed to send code.'; msg.className = 'auth-msg error';
     }
@@ -407,12 +441,15 @@ document.getElementById('inp-email').addEventListener('keydown', e => { if (e.ke
 document.getElementById('inp-otp').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-verify-otp').click(); });
 
 document.getElementById('btn-logout').addEventListener('click', () => {
-  TOKEN = ''; sessionStorage.removeItem('maixpo_admin_token');
+  TOKEN = ''; ACCESS_CODE = ''; sessionStorage.removeItem('maixpo_admin_token');
   showAuth();
   document.getElementById('inp-email').value = '';
   document.getElementById('inp-otp').value = '';
+  document.getElementById('inp-access').value = '';
+  document.getElementById('msg-access').textContent = '';
   document.getElementById('step-otp').classList.remove('active');
-  document.getElementById('step-email').classList.add('active');
+  document.getElementById('step-email').classList.remove('active');
+  document.getElementById('step-access').classList.add('active');
 });
 
 // ─── TABS ─────────────────────────────────────────────────────────────────────
