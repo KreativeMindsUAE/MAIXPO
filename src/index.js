@@ -8,8 +8,8 @@ function corsHeaders(origin) {
   const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
@@ -426,6 +426,44 @@ function ticketEmailHtml({ full_name, ticket_tier, city, ticket_id }) {
 </html>`;
 }
 
+// ── ADMIN AUTH ────────────────────────────────────────────────────────────────
+
+async function adminSignToken(email, secret) {
+  const exp = Math.floor(Date.now() / 1000) + 172800; // 48h
+  const enc = new TextEncoder();
+  const payload = _b64urlEncode(enc.encode(JSON.stringify({ email, exp })));
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(payload));
+  return payload + '.' + _b64urlEncode(new Uint8Array(sig));
+}
+
+async function adminVerifyToken(token, secret) {
+  try {
+    const dot = token.lastIndexOf('.');
+    if (dot < 0) return null;
+    const payload = token.slice(0, dot);
+    const sigPart = token.slice(dot + 1).replace(/-/g, '+').replace(/_/g, '/');
+    const sigPad = sigPart + '='.repeat((4 - sigPart.length % 4) % 4);
+    const sigBytes = Uint8Array.from(atob(sigPad), c => c.charCodeAt(0));
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const valid = await crypto.subtle.verify('HMAC', key, sigBytes, enc.encode(payload));
+    if (!valid) return null;
+    const payPart = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const payPad = payPart + '='.repeat((4 - payPart.length % 4) % 4);
+    const data = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(payPad), c => c.charCodeAt(0))));
+    if (data.exp < Math.floor(Date.now() / 1000)) return null;
+    return data;
+  } catch { return null; }
+}
+
+async function checkAdminAuth(request, env) {
+  if (!env.ADMIN_SECRET) return null;
+  const auth = request.headers.get('Authorization') || '';
+  if (!auth.startsWith('Bearer ')) return null;
+  return adminVerifyToken(auth.slice(7), env.ADMIN_SECRET);
+}
+
 // ── MAIN HANDLER ──────────────────────────────────────────────────────────────
 
 export default {
@@ -696,6 +734,254 @@ export default {
           ...corsHeaders(origin),
         },
       });
+    }
+
+    // ── Admin routes ──────────────────────────────────────────────────────────
+    if (url.pathname.startsWith('/api/admin/')) {
+
+      // POST /api/admin/send-otp — no auth required
+      if (request.method === 'POST' && url.pathname === '/api/admin/send-otp') {
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const email = (body.email || '').trim().toLowerCase();
+        if (!email) return json({ error: 'Email required' }, 400, origin);
+        const whitelist = (env.ADMIN_WHITELIST || 'khalidmir.88@gmail.com').split(',').map(e => e.trim().toLowerCase());
+        if (!whitelist.includes(email)) return json({ error: 'Not authorized' }, 403, origin);
+        const otp = String(Math.floor(100000 + Math.random() * 900000));
+        const expiresAt = Math.floor(Date.now() / 1000) + 600; // 10 min
+        await env.DB.prepare(`INSERT INTO admin_otps (email, otp, expires_at) VALUES (?, ?, ?)`).bind(email, otp, expiresAt).run();
+        try {
+          await sendGmailEmail(env, {
+            to: email,
+            subject: 'MAIXPO Admin — Your login code',
+            html: `<div style="font-family:monospace;background:#0a0a0a;color:#f5f2ec;padding:32px;max-width:400px;">
+              <div style="font-size:20px;font-weight:900;letter-spacing:4px;color:#e8ff00;margin-bottom:24px;">MAIXPO ADMIN</div>
+              <div style="font-size:13px;color:rgba(245,242,236,0.6);margin-bottom:16px;">Your one-time login code:</div>
+              <div style="font-size:36px;font-weight:900;letter-spacing:8px;color:#e8ff00;margin-bottom:16px;">${otp}</div>
+              <div style="font-size:11px;color:rgba(245,242,236,0.35);">Expires in 10 minutes. Do not share this code.</div>
+            </div>`,
+          });
+        } catch (err) {
+          return json({ error: 'Failed to send email: ' + err.message }, 500, origin);
+        }
+        return json({ sent: true }, 200, origin);
+      }
+
+      // POST /api/admin/verify-otp — no auth required
+      if (request.method === 'POST' && url.pathname === '/api/admin/verify-otp') {
+        if (!env.ADMIN_SECRET) return json({ error: 'Admin not configured' }, 500, origin);
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const email = (body.email || '').trim().toLowerCase();
+        const otp = (body.otp || '').trim();
+        if (!email || !otp) return json({ error: 'Email and OTP required' }, 400, origin);
+        const now = Math.floor(Date.now() / 1000);
+        const row = await env.DB.prepare(
+          `SELECT id FROM admin_otps WHERE email=? AND otp=? AND used=0 AND expires_at>? ORDER BY id DESC LIMIT 1`
+        ).bind(email, otp, now).first();
+        if (!row) return json({ error: 'Invalid or expired code' }, 401, origin);
+        await env.DB.prepare(`UPDATE admin_otps SET used=1 WHERE id=?`).bind(row.id).run();
+        const token = await adminSignToken(email, env.ADMIN_SECRET);
+        return json({ token }, 200, origin);
+      }
+
+      // All routes below require auth
+      const adminUser = await checkAdminAuth(request, env);
+      if (!adminUser) return json({ error: 'Unauthorized' }, 401, origin);
+
+      // GET /api/admin/me
+      if (request.method === 'GET' && url.pathname === '/api/admin/me') {
+        return json({ email: adminUser.email }, 200, origin);
+      }
+
+      // GET /api/admin/registrations
+      if (request.method === 'GET' && url.pathname === '/api/admin/registrations') {
+        const search = (url.searchParams.get('search') || '').trim();
+        const status = url.searchParams.get('status') || 'all';
+        const page = Math.max(1, parseInt(url.searchParams.get('page') || '1', 10));
+        const limit = 50;
+        const offset = (page - 1) * limit;
+        let where = '1=1';
+        const binds = [];
+        if (status !== 'all') { where += ' AND payment_status=?'; binds.push(status); }
+        if (search) { where += ' AND (full_name LIKE ? OR email LIKE ? OR company LIKE ?)'; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
+        const { results } = await env.DB.prepare(
+          `SELECT id, full_name, email, company, job_title, city, ticket_tier, payment_status, promo_code, promo_discount_pct, ticket_id, created_at FROM registrations WHERE ${where} ORDER BY id DESC LIMIT ? OFFSET ?`
+        ).bind(...binds, limit, offset).all();
+        const countRow = await env.DB.prepare(`SELECT COUNT(*) as cnt FROM registrations WHERE ${where}`).bind(...binds).first();
+        return json({ registrations: results, total: countRow?.cnt || 0, page, limit }, 200, origin);
+      }
+
+      // GET /api/admin/registrations/export.csv
+      if (request.method === 'GET' && url.pathname === '/api/admin/registrations/export.csv') {
+        const { results } = await env.DB.prepare(
+          `SELECT id, full_name, email, company, job_title, city, ticket_tier, payment_status, promo_code, promo_discount_pct, ticket_id, industry, ai_stage, goals, hear_about, created_at FROM registrations ORDER BY id DESC`
+        ).all();
+        const headers = ['ID', 'Name', 'Email', 'Company', 'Job Title', 'City', 'Tier', 'Status', 'Promo Code', 'Discount%', 'Ticket ID', 'Industry', 'AI Stage', 'Goals', 'Source', 'Date'];
+        const escape = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+        const rows = results.map(r => [r.id, r.full_name, r.email, r.company, r.job_title, r.city, r.ticket_tier, r.payment_status, r.promo_code, r.promo_discount_pct, r.ticket_id, r.industry, r.ai_stage, r.goals, r.hear_about, r.created_at].map(escape).join(','));
+        const csv = [headers.map(escape).join(','), ...rows].join('\r\n');
+        return new Response(csv, { headers: { 'Content-Type': 'text/csv', 'Content-Disposition': 'attachment; filename="maixpo-registrations.csv"', ...corsHeaders(origin) } });
+      }
+
+      // POST /api/admin/registrations/:id/email
+      if (request.method === 'POST' && /^\/api\/admin\/registrations\/\d+\/email$/.test(url.pathname)) {
+        const regId = url.pathname.split('/')[4];
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const { subject, message } = body;
+        if (!subject || !message) return json({ error: 'subject and message required' }, 400, origin);
+        const reg = await env.DB.prepare(`SELECT email, full_name FROM registrations WHERE id=?`).bind(regId).first();
+        if (!reg) return json({ error: 'Registrant not found' }, 404, origin);
+        try {
+          await sendGmailEmail(env, {
+            to: reg.email,
+            subject,
+            html: `<div style="font-family:'Helvetica Neue',Arial,sans-serif;background:#0e0e0e;color:#f5f2ec;padding:32px;max-width:560px;">
+              <div style="font-size:20px;font-weight:900;letter-spacing:4px;margin-bottom:24px;">MAI<span style="color:#e8ff00;">XPO</span></div>
+              <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;">${message.replace(/</g, '&lt;')}</div>
+              <div style="margin-top:32px;padding-top:16px;border-top:1px solid rgba(245,242,236,0.1);font-size:11px;color:rgba(245,242,236,0.3);">MAIXPO 2026 &middot; maixpo.com</div>
+            </div>`,
+          });
+          return json({ sent: true }, 200, origin);
+        } catch (err) {
+          return json({ error: err.message }, 500, origin);
+        }
+      }
+
+      // GET /api/admin/promo-codes
+      if (request.method === 'GET' && url.pathname === '/api/admin/promo-codes') {
+        const { results } = await env.DB.prepare(
+          `SELECT p.code, p.discount_pct, p.max_uses, p.active,
+            (SELECT COUNT(*) FROM registrations r WHERE r.promo_code=p.code AND r.payment_status='paid') as used_count
+           FROM promo_codes p ORDER BY p.code ASC`
+        ).all();
+        return json({ codes: results }, 200, origin);
+      }
+
+      // POST /api/admin/promo-codes
+      if (request.method === 'POST' && url.pathname === '/api/admin/promo-codes') {
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const code = (body.code || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const discount_pct = parseInt(body.discount_pct, 10);
+        const max_uses = body.max_uses ? parseInt(body.max_uses, 10) : null;
+        if (!code || isNaN(discount_pct) || discount_pct < 1 || discount_pct > 100) return json({ error: 'Valid code and discount_pct (1-100) required' }, 400, origin);
+        try {
+          await env.DB.prepare(`INSERT INTO promo_codes (code, discount_pct, max_uses, active) VALUES (?, ?, ?, 1)`).bind(code, discount_pct, max_uses).run();
+          return json({ created: true, code }, 201, origin);
+        } catch { return json({ error: 'Code already exists' }, 409, origin); }
+      }
+
+      // PATCH /api/admin/promo-codes/:code/toggle
+      if (request.method === 'PATCH' && /^\/api\/admin\/promo-codes\/[A-Z0-9]+\/toggle$/.test(url.pathname)) {
+        const code = url.pathname.split('/')[4];
+        const row = await env.DB.prepare(`SELECT active FROM promo_codes WHERE code=?`).bind(code).first();
+        if (!row) return json({ error: 'Not found' }, 404, origin);
+        await env.DB.prepare(`UPDATE promo_codes SET active=? WHERE code=?`).bind(row.active ? 0 : 1, code).run();
+        return json({ code, active: !row.active }, 200, origin);
+      }
+
+      // DELETE /api/admin/promo-codes/:code
+      if (request.method === 'DELETE' && /^\/api\/admin\/promo-codes\/[A-Z0-9]+$/.test(url.pathname)) {
+        const code = url.pathname.split('/')[4];
+        await env.DB.prepare(`DELETE FROM promo_codes WHERE code=?`).bind(code).run();
+        return json({ deleted: true }, 200, origin);
+      }
+
+      // GET /api/admin/settings
+      if (request.method === 'GET' && url.pathname === '/api/admin/settings') {
+        const { results } = await env.DB.prepare(`SELECT key, value FROM system_settings`).all();
+        const settings = {};
+        for (const r of results) settings[r.key] = r.value;
+        return json({ settings }, 200, origin);
+      }
+
+      // POST /api/admin/settings
+      if (request.method === 'POST' && url.pathname === '/api/admin/settings') {
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const allowed = ['price_standard', 'price_vip', 'early_bird_active', 'early_bird_end'];
+        const stmts = [];
+        for (const key of allowed) {
+          if (body[key] !== undefined) {
+            stmts.push(env.DB.prepare(`INSERT INTO system_settings (key, value, updated_at) VALUES (?, ?, unixepoch()) ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at`).bind(key, String(body[key])));
+          }
+        }
+        if (stmts.length) await env.DB.batch(stmts);
+        return json({ updated: true }, 200, origin);
+      }
+
+      // GET /api/admin/sponsors
+      if (request.method === 'GET' && url.pathname === '/api/admin/sponsors') {
+        const { results } = await env.DB.prepare(
+          `SELECT id, sponsor_name, tier, contact_name, email, notes, status, created_at FROM sponsor_inquiries ORDER BY id DESC`
+        ).all();
+        return json({ sponsors: results }, 200, origin);
+      }
+
+      // POST /api/admin/sponsors
+      if (request.method === 'POST' && url.pathname === '/api/admin/sponsors') {
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const { sponsor_name, tier, contact_name, email, notes } = body;
+        if (!sponsor_name || !contact_name || !email) return json({ error: 'sponsor_name, contact_name, email required' }, 400, origin);
+        const validTiers = ['Platinum', 'Gold', 'Silver', 'Bronze', 'Media'];
+        const safeTier = validTiers.includes(tier) ? tier : 'Silver';
+        const result = await env.DB.prepare(
+          `INSERT INTO sponsor_inquiries (sponsor_name, tier, contact_name, email, notes) VALUES (?, ?, ?, ?, ?)`
+        ).bind(sponsor_name, safeTier, contact_name, email, notes || null).run();
+        return json({ created: true, id: result.meta.last_row_id }, 201, origin);
+      }
+
+      // PATCH /api/admin/sponsors/:id/status
+      if (request.method === 'PATCH' && /^\/api\/admin\/sponsors\/\d+\/status$/.test(url.pathname)) {
+        const id = url.pathname.split('/')[4];
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const validStatuses = ['new', 'contacted', 'confirmed', 'declined'];
+        if (!validStatuses.includes(body.status)) return json({ error: 'Invalid status' }, 400, origin);
+        await env.DB.prepare(`UPDATE sponsor_inquiries SET status=?, updated_at=unixepoch() WHERE id=?`).bind(body.status, id).run();
+        return json({ updated: true }, 200, origin);
+      }
+
+      // GET /api/admin/insights
+      if (request.method === 'GET' && url.pathname === '/api/admin/insights') {
+        const { results } = await env.DB.prepare(
+          `SELECT id, slug, title, excerpt, author, tags, status, published_at, created_at FROM insights_posts ORDER BY id DESC`
+        ).all();
+        return json({ posts: results }, 200, origin);
+      }
+
+      // POST /api/admin/insights
+      if (request.method === 'POST' && url.pathname === '/api/admin/insights') {
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const { title, slug, author, tags, excerpt, content_html, status, published_at } = body;
+        if (!title || !slug) return json({ error: 'title and slug required' }, 400, origin);
+        const safeStatus = status === 'published' ? 'published' : 'draft';
+        try {
+          const result = await env.DB.prepare(
+            `INSERT INTO insights_posts (slug, title, excerpt, content_html, author, tags, status, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+          ).bind(slug, title, excerpt || null, content_html || null, author || 'MAIXPO Team', tags || null, safeStatus, published_at || null).run();
+          return json({ created: true, id: result.meta.last_row_id }, 201, origin);
+        } catch { return json({ error: 'Slug already exists' }, 409, origin); }
+      }
+
+      // PATCH /api/admin/insights/:id
+      if (request.method === 'PATCH' && /^\/api\/admin\/insights\/\d+$/.test(url.pathname)) {
+        const id = url.pathname.split('/')[4];
+        let body;
+        try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
+        const safeStatus = body.status === 'published' ? 'published' : 'draft';
+        const publishedAt = body.published_at ?? null;
+        await env.DB.prepare(
+          `UPDATE insights_posts SET status=?, published_at=?, updated_at=unixepoch() WHERE id=?`
+        ).bind(safeStatus, publishedAt, id).run();
+        return json({ updated: true }, 200, origin);
+      }
+
+      return json({ error: 'Admin route not found' }, 404, origin);
     }
 
     return json({ error: 'Not found' }, 404, origin);
