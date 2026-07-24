@@ -745,20 +745,49 @@ export default {
         try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
         const email = (body.email || '').trim().toLowerCase();
         if (!email) return json({ error: 'Email required' }, 400, origin);
-        const whitelist = (env.ADMIN_WHITELIST || 'khalidmir.88@gmail.com').split(',').map(e => e.trim().toLowerCase());
-        if (!whitelist.includes(email)) return json({ error: 'Not authorized' }, 403, origin);
+
+        // Access code gate — validated server-side only, never exposed in client code
+        const accessCode = (body.access_code || '').trim();
+        if (!env.ADMIN_ACCESS_CODE || accessCode !== env.ADMIN_ACCESS_CODE) {
+          return json({ error: 'Invalid access code' }, 403, origin);
+        }
+
+        // Email whitelist — stored in ADMIN_WHITELIST secret only, no hardcoded fallback
+        const whitelist = env.ADMIN_WHITELIST
+          ? env.ADMIN_WHITELIST.split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
+          : [];
+        if (!whitelist.length || !whitelist.includes(email)) {
+          return json({ error: 'Not authorized' }, 403, origin);
+        }
+
         const otp = String(Math.floor(100000 + Math.random() * 900000));
-        const expiresAt = Math.floor(Date.now() / 1000) + 600; // 10 min
+        const expiresAt = Math.floor(Date.now() / 1000) + 600;
         await env.DB.prepare(`INSERT INTO admin_otps (email, otp, expires_at) VALUES (?, ?, ?)`).bind(email, otp, expiresAt).run();
+
+        // Collect audit context from Cloudflare request
+        const loginIp = request.headers.get('CF-Connecting-IP') || 'unknown';
+        const loginCountry = (request.cf && request.cf.country) ? request.cf.country : 'unknown';
+        const loginIsp = (request.cf && request.cf.asOrganization) ? request.cf.asOrganization : 'unknown';
+        const loginCity = (request.cf && request.cf.city) ? request.cf.city : '';
+        const loginTime = new Date().toUTCString();
+
         try {
           await sendGmailEmail(env, {
             to: email,
             subject: 'MAIXPO Admin — Your login code',
-            html: `<div style="font-family:monospace;background:#0a0a0a;color:#f5f2ec;padding:32px;max-width:400px;">
+            html: `<div style="font-family:monospace;background:#0a0a0a;color:#f5f2ec;padding:32px;max-width:460px;">
               <div style="font-size:20px;font-weight:900;letter-spacing:4px;color:#e8ff00;margin-bottom:24px;">MAIXPO ADMIN</div>
-              <div style="font-size:13px;color:rgba(245,242,236,0.6);margin-bottom:16px;">Your one-time login code:</div>
-              <div style="font-size:36px;font-weight:900;letter-spacing:8px;color:#e8ff00;margin-bottom:16px;">${otp}</div>
-              <div style="font-size:11px;color:rgba(245,242,236,0.35);">Expires in 10 minutes. Do not share this code.</div>
+              <div style="font-size:13px;color:rgba(245,242,236,0.6);margin-bottom:12px;">Your one-time login code:</div>
+              <div style="font-size:36px;font-weight:900;letter-spacing:8px;color:#e8ff00;margin-bottom:12px;">${otp}</div>
+              <div style="font-size:11px;color:rgba(245,242,236,0.35);margin-bottom:24px;">Expires in 10 minutes. Do not share this code.</div>
+              <div style="border-top:1px solid rgba(245,242,236,0.1);padding-top:16px;font-size:10px;color:rgba(245,242,236,0.3);line-height:2;">
+                <div style="color:rgba(245,242,236,0.5);font-weight:700;letter-spacing:2px;margin-bottom:6px;">ACCESS AUDIT LOG</div>
+                <div>IP &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: ${loginIp}</div>
+                <div>Network : ${loginIsp}</div>
+                <div>Location: ${loginCity ? loginCity + ', ' : ''}${loginCountry}</div>
+                <div>Time &nbsp;&nbsp;&nbsp;: ${loginTime}</div>
+                <div style="margin-top:10px;color:rgba(245,242,236,0.18);line-height:1.6;">If you did not request this code, your admin credentials may be compromised. Do not share this code. Contact the system administrator immediately.</div>
+              </div>
             </div>`,
           });
         } catch (err) {
