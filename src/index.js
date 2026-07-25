@@ -237,34 +237,34 @@ function generateTicketSvg({ full_name, ticket_tier, city, ticket_id }) {
 <svg width="380" height="680" viewBox="0 0 380 680" xmlns="http://www.w3.org/2000/svg">
   <rect width="380" height="680" fill="#ffffff"/>
   <rect x="0" y="0" width="380" height="92" fill="#e8ff00"/>
-  <text x="24" y="54" font-family="Arial Black,Arial,sans-serif" font-size="28" font-weight="900" letter-spacing="5" fill="#0a0a0a">MAIXPO</text>
-  <text x="24" y="76" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="2" fill="rgba(10,10,10,0.5)">2026 EDITION</text>
+  <text x="24" y="54" font-family="Roboto,sans-serif" font-size="28" font-weight="900" letter-spacing="5" fill="#0a0a0a">MAIXPO</text>
+  <text x="24" y="76" font-family="Roboto,sans-serif" font-size="9" font-weight="700" letter-spacing="2" fill="rgba(10,10,10,0.5)">2026 EDITION</text>
   <rect x="250" y="32" width="106" height="24" fill="rgba(10,10,10,0.12)"/>
-  <text x="303" y="48" font-family="Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="1.5" fill="#0a0a0a" text-anchor="middle">${tierLabel}</text>
-  <text x="24" y="168" font-family="Arial Black,Arial,sans-serif" font-size="52" font-weight="900" letter-spacing="3" fill="#111111">${firstName}</text>
-  <text x="24" y="228" font-family="Arial Black,Arial,sans-serif" font-size="52" font-weight="900" letter-spacing="3" fill="#111111">${lastName || ' '}</text>
+  <text x="303" y="48" font-family="Roboto,sans-serif" font-size="8" font-weight="700" letter-spacing="1.5" fill="#0a0a0a" text-anchor="middle">${tierLabel}</text>
+  <text x="24" y="168" font-family="Roboto,sans-serif" font-size="52" font-weight="900" letter-spacing="3" fill="#111111">${firstName}</text>
+  <text x="24" y="228" font-family="Roboto,sans-serif" font-size="52" font-weight="900" letter-spacing="3" fill="#111111">${lastName || ' '}</text>
   <line x1="24" y1="252" x2="356" y2="252" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
-  <text x="24" y="280" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">LOCATION</text>
-  <text x="24" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">${cityLabel}</text>
+  <text x="24" y="280" font-family="Roboto,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">LOCATION</text>
+  <text x="24" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">${cityLabel}</text>
   <line x1="150" y1="264" x2="150" y2="308" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
-  <text x="162" y="280" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">DATE</text>
-  <text x="162" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">OCT 28-29, 2026</text>
+  <text x="162" y="280" font-family="Roboto,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">DATE</text>
+  <text x="162" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">OCT 28-29, 2026</text>
   <line x1="270" y1="264" x2="270" y2="308" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
-  <text x="282" y="280" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">ADMIT</text>
-  <text x="282" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">1 PERSON</text>
+  <text x="282" y="280" font-family="Roboto,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">ADMIT</text>
+  <text x="282" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">1 PERSON</text>
   <line x1="24" y1="316" x2="356" y2="316" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
   <rect x="24" y="332" width="332" height="64" fill="#f5f5f5" rx="2"/>
-  <text x="190" y="354" font-family="Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)" text-anchor="middle">TICKET ID</text>
-  <text x="190" y="378" font-family="Arial Black,Courier New,monospace" font-size="14" font-weight="900" letter-spacing="2" fill="#111111" text-anchor="middle">${ticket_id}</text>
-  <text x="190" y="396" font-family="Arial,sans-serif" font-size="8" letter-spacing="1" fill="rgba(0,0,0,0.35)" text-anchor="middle">Present this ID at venue entrance</text>
+  <text x="190" y="354" font-family="Roboto,sans-serif" font-size="8" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)" text-anchor="middle">TICKET ID</text>
+  <text x="190" y="378" font-family="Roboto,monospace" font-size="14" font-weight="900" letter-spacing="2" fill="#111111" text-anchor="middle">${ticket_id}</text>
+  <text x="190" y="396" font-family="Roboto,sans-serif" font-size="8" letter-spacing="1" fill="rgba(0,0,0,0.35)" text-anchor="middle">Present this ID at venue entrance</text>
   <line x1="12" y1="420" x2="368" y2="420" stroke="rgba(0,0,0,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
   <circle cx="0" cy="420" r="10" fill="#ffffff" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
   <circle cx="380" cy="420" r="10" fill="#ffffff" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
-  <text x="190" y="450" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)" text-anchor="middle">SCAN TO VERIFY TICKET</text>
+  <text x="190" y="450" font-family="Roboto,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)" text-anchor="middle">SCAN TO VERIFY TICKET</text>
   <rect x="${qrX - 6}" y="${qrY - 6}" width="${qrPx + 12}" height="${qrPx + 12}" fill="white" stroke="rgba(0,0,0,0.08)" stroke-width="1" rx="3"/>
   ${qrRects}
-  <text x="190" y="638" font-family="Arial,sans-serif" font-size="9" letter-spacing="3" fill="rgba(0,0,0,0.35)" text-anchor="middle">MAIXPO.COM</text>
-  <text x="190" y="658" font-family="Arial,sans-serif" font-size="8" fill="rgba(0,0,0,0.25)" text-anchor="middle">hello@maixpo.com</text>
+  <text x="190" y="638" font-family="Roboto,sans-serif" font-size="9" letter-spacing="3" fill="rgba(0,0,0,0.35)" text-anchor="middle">MAIXPO.COM</text>
+  <text x="190" y="658" font-family="Roboto,sans-serif" font-size="8" fill="rgba(0,0,0,0.25)" text-anchor="middle">hello@maixpo.com</text>
 </svg>`;
 }
 
@@ -275,9 +275,30 @@ function generateTicketId(city) {
   return `MAIXPO-${city}-26${hex}`;
 }
 
-function svgToPngBase64(svgString) {
+async function _fetchFontBuffer(weight) {
   try {
-    const resvg = new Resvg(svgString, { font: { loadSystemFonts: false } });
+    // Legacy IE UA → Google Fonts API v1 returns TTF (not WOFF/WOFF2)
+    const css = await fetch(
+      `https://fonts.googleapis.com/css?family=Roboto:${weight}`,
+      { headers: { 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)' } }
+    );
+    if (!css.ok) return null;
+    const text = await css.text();
+    const match = text.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/);
+    if (!match) return null;
+    const font = await fetch(match[1]);
+    if (!font.ok) return null;
+    return new Uint8Array(await font.arrayBuffer());
+  } catch {
+    return null;
+  }
+}
+
+async function svgToPngBase64(svgString) {
+  try {
+    const [regular, bold] = await Promise.all([_fetchFontBuffer(400), _fetchFontBuffer(700)]);
+    const fontBuffers = [regular, bold].filter(Boolean);
+    const resvg = new Resvg(svgString, { font: { loadSystemFonts: false, fontBuffers } });
     const renderData = resvg.render();
     const pngBytes = renderData.asPng();
     renderData.free();
@@ -552,7 +573,7 @@ export default {
           const emailParams = { full_name: row.full_name, ticket_tier: row.ticket_tier, city: row.city || 'KL', ticket_id: ticketId };
           const html = ticketEmailHtml(emailParams);
           const svgStr = generateTicketSvg(emailParams);
-          const pngB64 = svgToPngBase64(svgStr);
+          const pngB64 = await svgToPngBase64(svgStr);
           const attachments = pngB64
             ? [{ mime: 'image/png', filename: `MAIXPO-Ticket-${ticketId}.png`, data: pngB64 }]
             : [{ mime: 'image/svg+xml', filename: `MAIXPO-Ticket-${ticketId}.svg`, data: btoa(unescape(encodeURIComponent(svgStr))) }];
@@ -596,7 +617,7 @@ export default {
       const emailParams = { full_name: name, ticket_tier: tier || 'standard', city: city || 'KL', ticket_id: ticketId };
       const html = ticketEmailHtml(emailParams);
       const svgStr = generateTicketSvg(emailParams);
-      const pngB64 = svgToPngBase64(svgStr);
+      const pngB64 = await svgToPngBase64(svgStr);
       const attachments = pngB64
         ? [{ mime: 'image/png', filename: `MAIXPO-Ticket-${ticketId}.png`, data: pngB64 }]
         : [{ mime: 'image/svg+xml', filename: `MAIXPO-Ticket-${ticketId}.svg`, data: btoa(unescape(encodeURIComponent(svgStr))) }];
