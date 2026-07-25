@@ -1,3 +1,5 @@
+import qrcode from 'qrcode-generator';
+
 const ALLOWED_ORIGINS = [
   'https://maixpo.com',
   'https://www.maixpo.com',
@@ -209,9 +211,30 @@ function generateTicketSvg({ full_name, ticket_tier, city, ticket_id }) {
   const lastName = parts.slice(1).join(' ') || '';
   const cityLabel = city === 'KL' ? 'KUALA LUMPUR, MY' : 'DUBAI, UAE';
 
+  const verifyUrl = `https://maixpo.com/verify?id=${ticket_id}`;
+  const qr = qrcode(0, 'L');
+  qr.addData(verifyUrl);
+  qr.make();
+  const n = qr.getModuleCount();
+  const qrPx = 140;
+  const qrX = Math.round((380 - qrPx) / 2);
+  const qrY = 466;
+  const cell = qrPx / n;
+  let qrRects = '';
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (qr.isDark(r, c)) {
+        const rx = (qrX + c * cell).toFixed(2);
+        const ry = (qrY + r * cell).toFixed(2);
+        const rs = cell.toFixed(2);
+        qrRects += `<rect x="${rx}" y="${ry}" width="${rs}" height="${rs}" fill="#0a0a0a"/>`;
+      }
+    }
+  }
+
   return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="380" height="560" viewBox="0 0 380 560" xmlns="http://www.w3.org/2000/svg">
-  <rect width="380" height="560" fill="#0a0a0a"/>
+<svg width="380" height="680" viewBox="0 0 380 680" xmlns="http://www.w3.org/2000/svg">
+  <rect width="380" height="680" fill="#0a0a0a"/>
   <rect x="0" y="0" width="380" height="92" fill="#e8ff00"/>
   <text x="24" y="54" font-family="Arial Black,Arial,sans-serif" font-size="28" font-weight="900" letter-spacing="5" fill="#0a0a0a">MAIXPO</text>
   <text x="24" y="76" font-family="Arial,sans-serif" font-size="9" font-weight="700" letter-spacing="2" fill="rgba(10,10,10,0.5)">2026 EDITION</text>
@@ -224,19 +247,23 @@ function generateTicketSvg({ full_name, ticket_tier, city, ticket_id }) {
   <text x="24" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#f5f2ec">${cityLabel}</text>
   <line x1="150" y1="264" x2="150" y2="308" stroke="rgba(245,242,236,0.07)" stroke-width="1"/>
   <text x="162" y="280" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(245,242,236,0.4)">DATE</text>
-  <text x="162" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#f5f2ec">SEPT 2026</text>
+  <text x="162" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#f5f2ec">OCT 28-29, 2026</text>
   <line x1="270" y1="264" x2="270" y2="308" stroke="rgba(245,242,236,0.07)" stroke-width="1"/>
   <text x="282" y="280" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(245,242,236,0.4)">ADMIT</text>
   <text x="282" y="296" font-family="Arial,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#f5f2ec">1 PERSON</text>
   <line x1="24" y1="316" x2="356" y2="316" stroke="rgba(245,242,236,0.07)" stroke-width="1"/>
-  <rect x="24" y="340" width="332" height="72" fill="rgba(232,255,0,0.04)" rx="2"/>
-  <text x="190" y="368" font-family="Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="2" fill="rgba(245,242,236,0.4)" text-anchor="middle">TICKET ID</text>
-  <text x="190" y="392" font-family="Arial Black,Courier New,monospace" font-size="14" font-weight="900" letter-spacing="2" fill="#f5f2ec" text-anchor="middle">${ticket_id}</text>
-  <text x="190" y="412" font-family="Arial,sans-serif" font-size="8" letter-spacing="1" fill="rgba(245,242,236,0.3)" text-anchor="middle">Present this ID at venue entrance</text>
-  <rect x="0" y="460" width="380" height="100" fill="#111111"/>
-  <line x1="0" y1="460" x2="380" y2="460" stroke="rgba(245,242,236,0.07)" stroke-width="1"/>
-  <text x="190" y="500" font-family="Arial,sans-serif" font-size="9" letter-spacing="3" fill="rgba(245,242,236,0.5)" text-anchor="middle">MAIXPO.COM</text>
-  <text x="190" y="520" font-family="Arial,sans-serif" font-size="8" fill="rgba(245,242,236,0.2)" text-anchor="middle">hello@maixpo.com</text>
+  <rect x="24" y="332" width="332" height="64" fill="rgba(232,255,0,0.04)" rx="2"/>
+  <text x="190" y="354" font-family="Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="2" fill="rgba(245,242,236,0.4)" text-anchor="middle">TICKET ID</text>
+  <text x="190" y="378" font-family="Arial Black,Courier New,monospace" font-size="14" font-weight="900" letter-spacing="2" fill="#f5f2ec" text-anchor="middle">${ticket_id}</text>
+  <text x="190" y="396" font-family="Arial,sans-serif" font-size="8" letter-spacing="1" fill="rgba(245,242,236,0.25)" text-anchor="middle">Present this ID at venue entrance</text>
+  <line x1="12" y1="420" x2="368" y2="420" stroke="rgba(245,242,236,0.12)" stroke-width="1" stroke-dasharray="4,4"/>
+  <circle cx="0" cy="420" r="10" fill="#0a0a0a"/>
+  <circle cx="380" cy="420" r="10" fill="#0a0a0a"/>
+  <text x="190" y="450" font-family="Arial,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(245,242,236,0.3)" text-anchor="middle">SCAN TO VERIFY TICKET</text>
+  <rect x="${qrX - 6}" y="${qrY - 6}" width="${qrPx + 12}" height="${qrPx + 12}" fill="white" rx="3"/>
+  ${qrRects}
+  <text x="190" y="638" font-family="Arial,sans-serif" font-size="9" letter-spacing="3" fill="rgba(245,242,236,0.4)" text-anchor="middle">MAIXPO.COM</text>
+  <text x="190" y="658" font-family="Arial,sans-serif" font-size="8" fill="rgba(245,242,236,0.2)" text-anchor="middle">hello@maixpo.com</text>
 </svg>`;
 }
 
