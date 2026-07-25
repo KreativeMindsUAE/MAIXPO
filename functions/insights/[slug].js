@@ -198,7 +198,7 @@ ${NAV}
 <div class="post-body">
   ${post.content_html || ''}
   <div class="cta-strip">
-    <p>Join 6,500+ marketers at MAIXPO 2026 &#8212; Kuala Lumpur, September 2026.</p>
+    <p>Join 6,500+ marketers at MAIXPO 2026 &#8212; Kuala Lumpur, October 28-29, 2026.</p>
     <a href="/#tickets" class="cta-btn">Get Your Ticket</a>
   </div>
   <a href="/insights" class="back-link">&#8592; All Insights</a>
