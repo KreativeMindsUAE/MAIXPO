@@ -276,29 +276,36 @@ function generateTicketId(city) {
 }
 
 async function _fetchFontBuffer(weight) {
+  // Try Google Fonts CSS v1 with legacy IE UA — returns TTF src URLs
   try {
-    // Legacy IE UA → Google Fonts API v1 returns TTF (not WOFF/WOFF2)
     const css = await fetch(
       `https://fonts.googleapis.com/css?family=Roboto:${weight}`,
       { headers: { 'User-Agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)' } }
     );
-    if (!css.ok) return null;
-    const text = await css.text();
-    const match = text.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+\.ttf)\)/);
-    if (!match) return null;
-    const font = await fetch(match[1]);
-    if (!font.ok) return null;
-    return new Uint8Array(await font.arrayBuffer());
-  } catch {
-    return null;
-  }
+    if (css.ok) {
+      const text = await css.text();
+      // handle both quoted and unquoted url()
+      const match = text.match(/url\(['"]?(https:\/\/fonts\.gstatic\.com\/[^'")\s]+\.ttf)['"]?\)/);
+      if (match) {
+        const font = await fetch(match[1]);
+        if (font.ok) return new Uint8Array(await font.arrayBuffer());
+      }
+    }
+  } catch {}
+  return null;
 }
 
 async function svgToPngBase64(svgString) {
   try {
     const [regular, bold] = await Promise.all([_fetchFontBuffer(400), _fetchFontBuffer(700)]);
     const fontBuffers = [regular, bold].filter(Boolean);
-    const resvg = new Resvg(svgString, { font: { loadSystemFonts: false, fontBuffers } });
+    // If fonts couldn't be fetched, fall back to SVG so text is at least readable
+    if (fontBuffers.length === 0) return null;
+    // CustomFontsOptions and SystemFontsOptions are mutually exclusive —
+    // do NOT include loadSystemFonts when using fontBuffers
+    const resvg = new Resvg(svgString, {
+      font: { fontBuffers, defaultFontFamily: 'Roboto', sansSerifFamily: 'Roboto' },
+    });
     const renderData = resvg.render();
     const pngBytes = renderData.asPng();
     renderData.free();
