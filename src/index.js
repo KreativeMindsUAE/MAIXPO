@@ -264,7 +264,7 @@ function generateTicketSvg({ full_name, ticket_tier, city, ticket_id }) {
   <rect x="${qrX - 6}" y="${qrY - 6}" width="${qrPx + 12}" height="${qrPx + 12}" fill="white" stroke="rgba(0,0,0,0.08)" stroke-width="1" rx="3"/>
   ${qrRects}
   <text x="190" y="638" font-family="Roboto,sans-serif" font-size="9" letter-spacing="3" fill="rgba(0,0,0,0.35)" text-anchor="middle">MAIXPO.COM</text>
-  <text x="190" y="658" font-family="Roboto,sans-serif" font-size="8" fill="rgba(0,0,0,0.25)" text-anchor="middle">hello@maixpo.com</text>
+  <text x="190" y="658" font-family="Roboto,sans-serif" font-size="8" fill="rgba(0,0,0,0.25)" text-anchor="middle">info@maixpo.com</text>
 </svg>`;
 }
 
@@ -488,7 +488,7 @@ function ticketEmailHtml({ full_name, ticket_tier, city, ticket_id }) {
     <tr>
       <td align="center" style="padding:40px 0 48px;">
         <p style="font-size:13px;color:rgba(245,242,236,0.35);margin:0 0 8px;">Questions? We're here.</p>
-        <a href="mailto:hello@maixpo.com" style="color:#e8ff00;font-size:13px;text-decoration:none;font-weight:600;">hello@maixpo.com</a>
+        <a href="mailto:info@maixpo.com" style="color:#e8ff00;font-size:13px;text-decoration:none;font-weight:600;">info@maixpo.com</a>
         <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,242,236,0.2);margin:24px 0 0;">MAIXPO 2026 &middot; maixpo.com</p>
       </td>
     </tr>
@@ -761,7 +761,7 @@ export default {
           await env.DB.prepare(`UPDATE registrations SET stripe_session_id=? WHERE id=?`)
             .bind(session.id, registrationId).run();
         } catch (stripeErr) {
-          return json({ error: 'Payment setup failed. Please email hello@maixpo.com with your name to complete registration.', registration_id: registrationId }, 500, origin);
+          return json({ error: 'Payment setup failed. Please email info@maixpo.com with your name to complete registration.', registration_id: registrationId }, 500, origin);
         }
 
         return json({ success: true, id: registrationId, checkout_url }, 200, origin);

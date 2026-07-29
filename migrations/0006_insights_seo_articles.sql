@@ -198,7 +198,7 @@ INSERT INTO insights_posts (slug, title, excerpt, content_html, author, tags, st
 <p>Everything in Standard, plus all four workshop tracks, the VIP networking lounge, speaker meet-and-greet access, and priority main stage seating. VIP capacity is limited.</p>
 
 <h3>Group Rates</h3>
-<p>Group packages for teams of 10 or more are available at a discount. Contact <a href="mailto:hello@maixpo.com" style="color:var(--accent)">hello@maixpo.com</a> for group booking pricing. Both early bird prices increase closer to October -- registering now locks in the lowest available rate.</p>
+<p>Group packages for teams of 10 or more are available at a discount. Contact <a href="mailto:info@maixpo.com" style="color:var(--accent)">info@maixpo.com</a> for group booking pricing. Both early bird prices increase closer to October -- registering now locks in the lowest available rate.</p>
 
 <h2>Getting to Kuala Lumpur</h2>
 <p>KL is one of the most accessible conference destinations in Southeast Asia. KLIA connects direct to 100+ cities, and the KLIA Ekspres train reaches KL Sentral in 28 minutes. Malaysia has visa-free or visa-on-arrival entry for citizens of 160+ countries. The conference venue is centrally located with accommodation at every price point nearby. Full venue details will be announced as we approach October.</p>
@@ -215,7 +215,7 @@ INSERT INTO insights_posts (slug, title, excerpt, content_html, author, tags, st
 <p>VIP tickets include the four parallel workshop tracks, the VIP networking lounge, speaker meet-and-greet sessions, and priority seating. Standard tickets cover the main stage and exhibitor floor.</p>
 
 <h3>Can I get a group rate for my team?</h3>
-<p>Yes. Group rates are available for teams of 10 or more. Email hello@maixpo.com for pricing.</p>
+<p>Yes. Group rates are available for teams of 10 or more. Email info@maixpo.com for pricing.</p>
 
 <h3>When will the full speaker list be announced?</h3>
 <p>Speaker announcements are rolling. Follow MAIXPO on social media or sign up for updates at maixpo.com for the latest additions to the programme.</p>
