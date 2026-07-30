@@ -816,6 +816,44 @@ export default {
       });
     }
 
+    // ── Page view tracking ────────────────────────────────────────────────────
+    if (request.method === 'POST' && url.pathname === '/api/track') {
+      let body = {};
+      try { body = await request.json(); } catch {}
+
+      const path = String(body.path || '/').slice(0, 200);
+      const referrer = String(body.referrer || '').slice(0, 500);
+
+      // Skip bots
+      const ua = request.headers.get('user-agent') || '';
+      if (/bot|crawl|spider|Googlebot|bingbot|slurp|DuckDuck|Baidu|yandex|Sogou|Exabot|facebot|ia_archiver|Prerender|HeadlessChrome/i.test(ua)) {
+        return new Response(null, { status: 204, headers: corsHeaders(origin) });
+      }
+
+      const country = request.headers.get('CF-IPCountry') || '';
+      const ip = request.headers.get('CF-Connecting-IP') || '';
+
+      // Excluded IPs (set TRACKING_EXCLUDED_IPS secret as comma-separated list)
+      const excluded = (env.TRACKING_EXCLUDED_IPS || '').split(',').map(s => s.trim()).filter(Boolean);
+      if (excluded.includes(ip)) {
+        return new Response(null, { status: 204, headers: corsHeaders(origin) });
+      }
+
+      // Privacy-safe visitor hash (IP + salt, 16 hex chars)
+      const ipBytes = new TextEncoder().encode(ip + (env.INTERNAL_SECRET || 'mx'));
+      const hashBuf = await crypto.subtle.digest('SHA-256', ipBytes);
+      const visitor_hash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+
+      try {
+        await env.DB.prepare(
+          `INSERT INTO page_views (path, referrer, country, visitor_hash) VALUES (?, ?, ?, ?)`
+        ).bind(path, referrer || null, country || null, visitor_hash).run();
+      } catch (e) {
+        console.error('[track]', e.message);
+      }
+      return new Response(null, { status: 204, headers: corsHeaders(origin) });
+    }
+
     // ── Admin routes ──────────────────────────────────────────────────────────
     if (url.pathname.startsWith('/api/admin/')) {
 
@@ -1088,6 +1126,29 @@ export default {
           `UPDATE insights_posts SET status=?, published_at=?, updated_at=unixepoch() WHERE id=?`
         ).bind(safeStatus, publishedAt, id).run();
         return json({ updated: true }, 200, origin);
+      }
+
+      // GET /api/admin/traffic
+      if (request.method === 'GET' && url.pathname === '/api/admin/traffic') {
+        const days = Math.min(30, Math.max(1, parseInt(url.searchParams.get('days') || '7', 10)));
+        const since = Math.floor(Date.now() / 1000) - days * 86400;
+        const [todayRes, periodRes, pagesRes, referrersRes, countriesRes, dailyRes] = await env.DB.batch([
+          env.DB.prepare(`SELECT COUNT(*) as views, COUNT(DISTINCT visitor_hash) as uniques FROM page_views WHERE visited_at >= unixepoch('now','start of day')`),
+          env.DB.prepare(`SELECT COUNT(*) as views, COUNT(DISTINCT visitor_hash) as uniques FROM page_views WHERE visited_at >= ?`).bind(since),
+          env.DB.prepare(`SELECT path, COUNT(*) as views FROM page_views WHERE visited_at >= ? GROUP BY path ORDER BY views DESC LIMIT 10`).bind(since),
+          env.DB.prepare(`SELECT referrer, COUNT(*) as views FROM page_views WHERE visited_at >= ? AND referrer IS NOT NULL AND referrer != '' GROUP BY referrer ORDER BY views DESC LIMIT 10`).bind(since),
+          env.DB.prepare(`SELECT country, COUNT(*) as views FROM page_views WHERE visited_at >= ? AND country IS NOT NULL AND country != '' GROUP BY country ORDER BY views DESC LIMIT 10`).bind(since),
+          env.DB.prepare(`SELECT date(visited_at,'unixepoch') as day, COUNT(*) as views, COUNT(DISTINCT visitor_hash) as uniques FROM page_views WHERE visited_at >= ? GROUP BY day ORDER BY day ASC`).bind(since),
+        ]);
+        return json({
+          today: todayRes.results[0] || { views: 0, uniques: 0 },
+          period: periodRes.results[0] || { views: 0, uniques: 0 },
+          pages: pagesRes.results,
+          referrers: referrersRes.results,
+          countries: countriesRes.results,
+          daily: dailyRes.results,
+          days,
+        }, 200, origin);
       }
 
       return json({ error: 'Admin route not found' }, 404, origin);
