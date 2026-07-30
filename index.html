@@ -2020,5 +2020,13 @@ function regSubmit() {
 }
 </script>
 
+<script>
+(function(){
+  if(navigator.doNotTrack==='1') return;
+  var d={path:location.pathname,referrer:document.referrer||''};
+  fetch('https://maixpo-api.khalidgraphy-com.workers.dev/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d),keepalive:true}).catch(function(){});
+})();
+</script>
+
 </body>
 </html>

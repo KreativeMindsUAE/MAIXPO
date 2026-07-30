@@ -177,6 +177,7 @@ tr:hover td{background:rgba(245,242,236,0.02)}
     <div class="tab" data-tab="pricing">Pricing</div>
     <div class="tab" data-tab="sponsors">Sponsors</div>
     <div class="tab" data-tab="insights">Insights</div>
+    <div class="tab" data-tab="traffic">Traffic</div>
   </div>
 
   <!-- REGISTRATIONS -->
@@ -260,6 +261,64 @@ tr:hover td{background:rgba(245,242,236,0.02)}
         </thead>
         <tbody id="insight-tbody"><tr><td colspan="6" class="loading">Loading...</td></tr></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- TRAFFIC -->
+  <div class="panel" id="panel-traffic">
+    <div class="section-head">
+      <span class="section-title">Visitor Traffic</span>
+      <div class="toolbar">
+        <select id="traffic-days">
+          <option value="7">Last 7 days</option>
+          <option value="14">Last 14 days</option>
+          <option value="30">Last 30 days</option>
+        </select>
+        <button class="btn btn-ghost" id="btn-refresh-traffic">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Today Views</div>
+        <div id="stat-today-views" style="font-size:28px;font-weight:700;color:var(--accent)">-</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Today Visitors</div>
+        <div id="stat-today-uniques" style="font-size:28px;font-weight:700;color:var(--accent)">-</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Period Views</div>
+        <div id="stat-period-views" style="font-size:28px;font-weight:700">-</div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Period Visitors</div>
+        <div id="stat-period-uniques" style="font-size:28px;font-weight:700">-</div>
+      </div>
+    </div>
+
+    <!-- Daily chart -->
+    <div style="background:var(--surface);border:1px solid var(--border);padding:20px;margin-bottom:24px">
+      <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px">Daily Views</div>
+      <div id="traffic-chart" style="display:flex;align-items:flex-end;gap:4px;height:80px;overflow-x:auto"></div>
+      <div id="traffic-chart-labels" style="display:flex;gap:4px;margin-top:6px;overflow-x:auto"></div>
+    </div>
+
+    <!-- Bottom tables -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Top Pages</div>
+        <div id="traffic-pages"></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Referrers</div>
+        <div id="traffic-referrers"></div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);padding:20px">
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Countries</div>
+        <div id="traffic-countries"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -460,7 +519,7 @@ document.querySelectorAll('.tab').forEach(tab => {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
-    const loaders = { promos: loadPromos, pricing: loadSettings, sponsors: loadSponsors, insights: loadInsights };
+    const loaders = { promos: loadPromos, pricing: loadSettings, sponsors: loadSponsors, insights: loadInsights, traffic: loadTraffic };
     if (loaders[tab.dataset.tab]) loaders[tab.dataset.tab]();
   });
 });
@@ -762,6 +821,71 @@ async function toggleInsight(id, currentStatus) {
   await authFetch(\`/api/admin/insights/\${id}\`, { method: 'PATCH', body: JSON.stringify(body) });
   loadInsights();
 }
+
+// ─── TRAFFIC ──────────────────────────────────────────────────────────────────
+
+async function loadTraffic() {
+  const days = document.getElementById('traffic-days').value;
+  document.getElementById('stat-today-views').textContent = '...';
+  document.getElementById('stat-today-uniques').textContent = '...';
+  document.getElementById('stat-period-views').textContent = '...';
+  document.getElementById('stat-period-uniques').textContent = '...';
+  document.getElementById('traffic-chart').innerHTML = '';
+  document.getElementById('traffic-pages').innerHTML = '<div class="loading" style="padding:8px">Loading...</div>';
+  document.getElementById('traffic-referrers').innerHTML = '<div class="loading" style="padding:8px">Loading...</div>';
+  document.getElementById('traffic-countries').innerHTML = '<div class="loading" style="padding:8px">Loading...</div>';
+
+  const r = await authFetch('/api/admin/traffic?days=' + days);
+  if (!r.ok) {
+    document.getElementById('stat-today-views').textContent = 'Error';
+    return;
+  }
+  const d = await r.json();
+
+  document.getElementById('stat-today-views').textContent = d.today.views;
+  document.getElementById('stat-today-uniques').textContent = d.today.uniques;
+  document.getElementById('stat-period-views').textContent = d.period.views;
+  document.getElementById('stat-period-uniques').textContent = d.period.uniques;
+
+  // Chart
+  const chart = document.getElementById('traffic-chart');
+  const labels = document.getElementById('traffic-chart-labels');
+  const maxViews = Math.max(...(d.daily.map(r => r.views)), 1);
+  chart.innerHTML = d.daily.map(r => {
+    const h = Math.max(4, Math.round((r.views / maxViews) * 80));
+    return \`<div title="\${r.day}: \${r.views} views" style="flex:1;min-width:18px;height:\${h}px;background:var(--accent);opacity:0.85;border-radius:1px;cursor:default"></div>\`;
+  }).join('');
+  labels.innerHTML = d.daily.map(r => {
+    const parts = r.day.split('-');
+    return \`<div style="flex:1;min-width:18px;font-size:9px;color:var(--muted);text-align:center;overflow:hidden">\${parts[1]+'/'+parts[2]}</div>\`;
+  }).join('');
+
+  // Tables
+  function renderList(items, keyField, valField) {
+    if (!items.length) return '<div style="font-size:12px;color:var(--muted);padding:4px 0">No data yet</div>';
+    const max = items[0][valField];
+    return items.map(item => {
+      const pct = Math.round((item[valField] / max) * 100);
+      const label = esc(item[keyField] || '(direct)');
+      return \`<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70%">\${label}</span>
+          <span style="color:var(--muted);flex-shrink:0;margin-left:8px">\${item[valField]}</span>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.07);border-radius:1px">
+          <div style="height:3px;width:\${pct}%;background:var(--accent);border-radius:1px"></div>
+        </div>
+      </div>\`;
+    }).join('');
+  }
+
+  document.getElementById('traffic-pages').innerHTML = renderList(d.pages, 'path', 'views');
+  document.getElementById('traffic-referrers').innerHTML = renderList(d.referrers, 'referrer', 'views');
+  document.getElementById('traffic-countries').innerHTML = renderList(d.countries, 'country', 'views');
+}
+
+document.getElementById('traffic-days').addEventListener('change', loadTraffic);
+document.getElementById('btn-refresh-traffic').addEventListener('click', loadTraffic);
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 
