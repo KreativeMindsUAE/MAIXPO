@@ -1,13 +1,13 @@
 # MAIXPO
 
-> MAIXPO 2026 is Southeast Asia's premier AI marketing conference and expo, held in Kuala Lumpur, Malaysia on October 28-29, 2026. 50+ speakers, 50+ exhibitors, 6,500+ attendees from 10+ countries.
+> MAIXPO 2026 is Southeast Asia's premier AI marketing conference and expo, held in Kuala Lumpur, Malaysia on December 29-30, 2026. 50+ speakers, 50+ exhibitors, 6,500+ attendees from 10+ countries.
 
 MAIXPO brings together marketing leaders, CMOs, AI practitioners, agency founders, and martech buyers for two days of practical keynotes, live AI tool demonstrations, hands-on workshops, and structured B2B networking. Every session is built around deployed reality: real case studies, live tools, measurable outcomes.
 
 ## Event Details
 
 - Name: MAIXPO 2026 — AI Marketing Conference & Expo
-- Date: October 28-29, 2026 (Wednesday and Thursday)
+- Date: December 29-30, 2026 (Tuesday and Wednesday)
 - Location: Kuala Lumpur, Malaysia (venue TBC)
 - Format: In-person conference with live virtual stream
 - Scale: 6,500+ attendees, 50+ speakers, 50+ exhibitors, 10+ countries represented
