@@ -542,6 +542,44 @@ async function checkAdminAuth(request, env) {
   return adminVerifyToken(auth.slice(7), env.ADMIN_SECRET);
 }
 
+// ── PAYXEM WEBHOOK HELPERS ────────────────────────────────────────────────────
+
+async function _hmacSha256Hex(secret, body) {
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' }, false, ['verify', 'sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(body));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function _timingSafeEqualHex(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+async function _sendTicketForRegistration(env, row) {
+  const ticketId = row.ticket_id || generateTicketId(row.city || 'KL');
+  await env.DB.prepare(
+    `UPDATE registrations SET payment_status='paid', ticket_id=?, ticket_emailed=1 WHERE id=?`
+  ).bind(ticketId, row.id).run();
+  const emailParams = { full_name: row.full_name, ticket_tier: row.ticket_tier, city: row.city || 'KL', ticket_id: ticketId };
+  const html = ticketEmailHtml(emailParams);
+  const svgStr = generateTicketSvg(emailParams);
+  const pngB64 = await svgToPngBase64(svgStr);
+  const attachments = pngB64
+    ? [{ mime: 'image/png', filename: `MAIXPO-Ticket-${ticketId}.png`, data: pngB64 }]
+    : [{ mime: 'image/svg+xml', filename: `MAIXPO-Ticket-${ticketId}.svg`, data: btoa(unescape(encodeURIComponent(svgStr))) }];
+  await sendGmailEmail(env, {
+    to: row.email,
+    subject: `Your MAIXPO 2026 Ticket - ${row.full_name}`,
+    html,
+    attachments,
+  });
+  return ticketId;
+}
+
 // ── MAIN HANDLER ──────────────────────────────────────────────────────────────
 
 export default {
@@ -551,6 +589,71 @@ export default {
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
+    }
+
+    // ── Payxem outbound webhook receiver ──────────────────────────────────────
+    // Payxem fires POST here when a credit lands on the maixpo paylink.
+    // Signature header: X-Payxem-Signature: sha256=<hex> over raw body bytes.
+    // Shared secret: PAYXEM_WEBHOOK_SECRET (wrangler secret). We MUST return
+    // 2xx on any outcome that is not a signature failure or malformed body,
+    // so Payxem does not retry forever. No-match and already-sent both ok.
+    if (request.method === 'POST' && url.pathname === '/api/payxem-webhook') {
+      if (!env.PAYXEM_WEBHOOK_SECRET) {
+        console.error('[payxem-webhook] PAYXEM_WEBHOOK_SECRET not set');
+        return json({ error: 'webhook not configured' }, 503, origin);
+      }
+      const sigHeader = request.headers.get('x-payxem-signature') || '';
+      const deliveryId = request.headers.get('x-payxem-delivery') || '';
+      const bodyText = await request.text();
+      if (!sigHeader.startsWith('sha256=')) {
+        return json({ error: 'missing signature' }, 401, origin);
+      }
+      const theirHex = sigHeader.slice(7).toLowerCase();
+      const ourHex = await _hmacSha256Hex(env.PAYXEM_WEBHOOK_SECRET, bodyText);
+      if (!_timingSafeEqualHex(theirHex, ourHex)) {
+        return json({ error: 'bad signature' }, 401, origin);
+      }
+      let payload;
+      try { payload = JSON.parse(bodyText); } catch { return json({ error: 'invalid json' }, 400, origin); }
+
+      const payerEmail = String(payload?.payer_email || '').trim().toLowerCase();
+      if (!payerEmail) {
+        console.log('[payxem-webhook] no payer_email in payload', { delivery: deliveryId, invoice: payload?.invoice_number });
+        return json({ status: 'no_email' }, 200, origin);
+      }
+
+      const row = await env.DB.prepare(
+        `SELECT id, full_name, email, ticket_tier, city, ticket_id, ticket_emailed
+         FROM registrations
+         WHERE LOWER(email) = ? AND ticket_emailed = 0
+         ORDER BY id DESC LIMIT 1`
+      ).bind(payerEmail).first();
+
+      if (!row) {
+        const already = await env.DB.prepare(
+          `SELECT id, ticket_id FROM registrations WHERE LOWER(email) = ? AND ticket_emailed = 1 ORDER BY id DESC LIMIT 1`
+        ).bind(payerEmail).first();
+        if (already) {
+          console.log('[payxem-webhook] already emailed', { delivery: deliveryId, reg: already.id, ticket: already.ticket_id });
+          return json({ status: 'already_sent', ticket_id: already.ticket_id }, 200, origin);
+        }
+        console.log('[payxem-webhook] no match for payer', { delivery: deliveryId, email: payerEmail, invoice: payload?.invoice_number });
+        return json({ status: 'no_match' }, 200, origin);
+      }
+
+      try {
+        const ticketId = await _sendTicketForRegistration(env, row);
+        console.log('[payxem-webhook] ticket sent', { delivery: deliveryId, reg: row.id, ticket: ticketId });
+        return json({ status: 'sent', ticket_id: ticketId }, 200, origin);
+      } catch (e) {
+        // Payment is credited on Payxem; email failure must not re-fire ticket_emailed=1,
+        // so roll back the flag so a retry (or admin resend) can succeed.
+        try {
+          await env.DB.prepare(`UPDATE registrations SET ticket_emailed=0 WHERE id=?`).bind(row.id).run();
+        } catch (_) {}
+        console.error('[payxem-webhook] email send failed', { delivery: deliveryId, reg: row.id, err: e?.message });
+        return json({ error: 'email send failed, will retry' }, 500, origin);
+      }
     }
 
     // ── Send ticket email (admin endpoint) ────────────────────────────────────
