@@ -1873,7 +1873,7 @@ function showCity(city, btn) {
 // Registration modal
 var _regCity = 'KL', _regTier = 'standard';
 var _promoCode = null, _promoDiscount = 0, _promoOriginal = 0, _promoFinal = 0;
-var _PRICES = { standard: 39.99, vip: 99.99 };
+var _PRICES = { standard: 49, vip: 99 };
 
 function openRegModal(city, tier, label) {
   _regCity = city;
@@ -1923,7 +1923,7 @@ function regTogglePromo() {
 }
 
 function regUpdatePriceBox() {
-  var base = _PRICES[_regTier] || 39.99;
+  var base = _PRICES[_regTier] || 49;
   var box = document.getElementById('regPriceBox');
   var label = document.getElementById('regPriceLabel');
   var val = document.getElementById('regPriceValue');
