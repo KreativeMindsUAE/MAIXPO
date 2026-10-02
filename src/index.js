@@ -892,7 +892,7 @@ export default {
         const amountUsd = (Number(finalAmount) / 100).toFixed(2);
         const tierLbl = TIER_LABELS[ticket_tier] || ticket_tier;
         const payNote = `MAIXPO 2026 ${tierLbl} ticket (${ticketId})`;
-        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${ticketId}&amount=${amountUsd}&note=${encodeURIComponent(payNote)}`;
+        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${ticketId}&amount=${amountUsd}&lock_amount=1&note=${encodeURIComponent(payNote)}`;
 
         return json({ success: true, id: registrationId, ticket_id: ticketId, amount_usd: amountUsd, checkout_url }, 200, origin);
       } catch (err) {
