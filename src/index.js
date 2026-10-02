@@ -37,7 +37,7 @@ async function getTicketPrice(env, tier) {
 
   try {
     const settings = await env.DB.prepare(
-      `SELECT value FROM system_settings WHERE key IN ('price_${tier}', 'price_${tier}_normal', 'early_bird_end')`
+      `SELECT key, value FROM system_settings WHERE key IN ('price_${tier}', 'price_${tier}_normal', 'early_bird_end')`
     ).all();
 
     const settingsMap = {};
@@ -886,9 +886,15 @@ export default {
         try {
           await env.DB.prepare(`UPDATE registrations SET ticket_id = ? WHERE id = ?`).bind(ticketId, registrationId).run();
         } catch (_) { /* non-fatal: receiver still falls back to email match */ }
-        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${ticketId}`;
+        // Pre-fill the hosted paylink amount + note so the buyer does not type
+        // either. Payxem paylink reads ?amount (USD dollars) and ?note from the
+        // URL. finalAmount is in cents here, convert to dollars string.
+        const amountUsd = (Number(finalAmount) / 100).toFixed(2);
+        const tierLbl = TIER_LABELS[ticket_tier] || ticket_tier;
+        const payNote = `MAIXPO 2026 ${tierLbl} ticket (${ticketId})`;
+        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${ticketId}&amount=${amountUsd}&note=${encodeURIComponent(payNote)}`;
 
-        return json({ success: true, id: registrationId, ticket_id: ticketId, checkout_url }, 200, origin);
+        return json({ success: true, id: registrationId, ticket_id: ticketId, amount_usd: amountUsd, checkout_url }, 200, origin);
       } catch (err) {
         return json({ error: 'Registration failed, please try again' }, 500, origin);
       }
