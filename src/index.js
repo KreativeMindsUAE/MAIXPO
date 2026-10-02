@@ -24,11 +24,6 @@ function json(data, status = 200, origin = '') {
 }
 
 const VALID_TIERS = ['standard', 'vip'];
-const STRIPE_PRICES = { standard: 3999, vip: 9999 }; // fallback cents USD (legacy)
-const STRIPE_NAMES = {
-  standard: 'MAIXPO 2026 — Standard Ticket',
-  vip: 'MAIXPO 2026 — VIP Executive Ticket',
-};
 const TIER_LABELS = { standard: 'Standard', vip: 'VIP Executive' };
 const VALID_CITIES = ['KL', 'Dubai'];
 const VALID_INDUSTRIES = ['agency', 'brand', 'saas', 'consulting', 'media', 'other'];
@@ -38,7 +33,7 @@ const VALID_HEAR = ['social', 'colleague', 'google', 'email', 'other'];
 
 // ── Pricing Helpers ────────────────────────────────────────────────────────
 async function getTicketPrice(env, tier) {
-  if (!VALID_TIERS.includes(tier)) return STRIPE_PRICES[tier];
+  if (!VALID_TIERS.includes(tier)) throw new Error(`Invalid tier: ${tier}`);
 
   try {
     const settings = await env.DB.prepare(
@@ -54,12 +49,12 @@ async function getTicketPrice(env, tier) {
     const earlyBirdEnd = settingsMap.early_bird_end || 1793404799; // Oct 30, 2026
 
     if (now < earlyBirdEnd) {
-      return settingsMap[`price_${tier}`] || STRIPE_PRICES[tier];
+      return settingsMap[`price_${tier}`];
     } else {
-      return settingsMap[`price_${tier}_normal`] || settingsMap[`price_${tier}`] || STRIPE_PRICES[tier];
+      return settingsMap[`price_${tier}_normal`] || settingsMap[`price_${tier}`];
     }
-  } catch {
-    return STRIPE_PRICES[tier];
+  } catch (e) {
+    throw new Error(`Failed to get price for tier ${tier}: ${e.message}`);
   }
 }
 
@@ -77,38 +72,6 @@ async function isEarlyBirdActive(env) {
   }
 }
 
-// ── STRIPE ────────────────────────────────────────────────────────────────────
-
-async function stripeCreateCheckout(env, { email, name, tier, city, registrationId, amountOverride }) {
-  const amount = amountOverride ?? STRIPE_PRICES[tier];
-  if (!amount) throw new Error('Invalid tier for Stripe');
-  const productName = STRIPE_NAMES[tier] + ' — ' + city;
-  const params = new URLSearchParams();
-  params.set('mode', 'payment');
-  params.set('line_items[0][price_data][currency]', 'usd');
-  params.set('line_items[0][price_data][product_data][name]', productName);
-  params.set('line_items[0][price_data][unit_amount]', String(amount));
-  params.set('line_items[0][quantity]', '1');
-  params.set('success_url', 'https://maixpo.com/payment-success?session_id={CHECKOUT_SESSION_ID}');
-  params.set('cancel_url', 'https://maixpo.com/payment-cancelled');
-  params.set('customer_email', email);
-  params.set('metadata[registration_id]', String(registrationId));
-  params.set('metadata[ticket_tier]', tier);
-  params.set('metadata[city]', city);
-  const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Basic ' + btoa(env.STRIPE_SECRET_KEY + ':'),
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: params,
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error('Stripe: ' + err);
-  }
-  return res.json();
-}
 
 // ── GMAIL HELPERS ─────────────────────────────────────────────────────────────
 
@@ -590,63 +553,50 @@ export default {
       return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
-    // ── Payment verification + ticket email ────────────────────────────────
-    if (request.method === 'GET' && url.pathname === '/api/payment-verify') {
-      const sessionId = url.searchParams.get('session_id');
-      if (!sessionId) return json({ error: 'Missing session_id' }, 400, origin);
+    // ── Send ticket email (admin endpoint) ────────────────────────────────────
+    if (request.method === 'POST' && url.pathname === '/api/send-ticket-email') {
+      const secret = request.headers.get('x-internal-secret');
+      if (!env.INTERNAL_SECRET || secret !== env.INTERNAL_SECRET) {
+        return json({ error: 'Unauthorized' }, 401, origin);
+      }
+      let body;
+      try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400, origin); }
 
-      const res = await fetch(`https://api.stripe.com/v1/checkout/sessions/${encodeURIComponent(sessionId)}`, {
-        headers: { 'Authorization': 'Basic ' + btoa(env.STRIPE_SECRET_KEY + ':') },
-      });
-      if (!res.ok) return json({ error: 'Session not found' }, 404, origin);
-      const session = await res.json();
-      const paid = session.payment_status === 'paid';
+      const { registration_id } = body;
+      if (!registration_id) return json({ error: 'registration_id required' }, 400, origin);
 
-      if (paid) {
-        // Fetch current row to check ticket_emailed
-        const row = await env.DB.prepare(
-          `SELECT id, full_name, email, ticket_tier, city, ticket_id, ticket_emailed FROM registrations WHERE stripe_session_id=?`
-        ).bind(sessionId).first();
+      const row = await env.DB.prepare(
+        `SELECT id, full_name, email, ticket_tier, city, ticket_id, ticket_emailed FROM registrations WHERE id=?`
+      ).bind(registration_id).first();
 
-        if (row && !row.ticket_emailed) {
-          // Generate unique ticket ID if not already set
-          const ticketId = row.ticket_id || generateTicketId(row.city || 'KL');
+      if (!row) return json({ error: 'Registration not found' }, 404, origin);
 
-          // Update D1: payment_status, ticket_id, ticket_emailed
-          await env.DB.prepare(
-            `UPDATE registrations SET payment_status='paid', ticket_id=?, ticket_emailed=1 WHERE id=?`
-          ).bind(ticketId, row.id).run();
+      const ticketId = row.ticket_id || generateTicketId(row.city || 'KL');
 
-          // Send ticket email (non-blocking fail)
-          const emailParams = { full_name: row.full_name, ticket_tier: row.ticket_tier, city: row.city || 'KL', ticket_id: ticketId };
-          const html = ticketEmailHtml(emailParams);
-          const svgStr = generateTicketSvg(emailParams);
-          const pngB64 = await svgToPngBase64(svgStr);
-          const attachments = pngB64
-            ? [{ mime: 'image/png', filename: `MAIXPO-Ticket-${ticketId}.png`, data: pngB64 }]
-            : [{ mime: 'image/svg+xml', filename: `MAIXPO-Ticket-${ticketId}.svg`, data: btoa(unescape(encodeURIComponent(svgStr))) }];
-          try {
-            await sendGmailEmail(env, {
-              to: row.email,
-              subject: `Your MAIXPO 2026 Ticket - ${row.full_name}`,
-              html,
-              attachments,
-            });
-          } catch (emailErr) {
-            console.error('[ticket-email] send failed:', emailErr.message);
-          }
-        } else if (row && row.ticket_emailed === 0) {
-          // Row exists but ticket not emailed (payment_status might be stale)
-          await env.DB.prepare(`UPDATE registrations SET payment_status='paid' WHERE stripe_session_id=?`)
-            .bind(sessionId).run();
-        } else if (!row) {
-          // Fallback: no matching row, just mark paid by session
-          await env.DB.prepare(`UPDATE registrations SET payment_status='paid' WHERE stripe_session_id=?`)
-            .bind(sessionId).run();
-        }
+      await env.DB.prepare(
+        `UPDATE registrations SET payment_status='paid', ticket_id=?, ticket_emailed=1 WHERE id=?`
+      ).bind(ticketId, row.id).run();
+
+      const emailParams = { full_name: row.full_name, ticket_tier: row.ticket_tier, city: row.city || 'KL', ticket_id: ticketId };
+      const html = ticketEmailHtml(emailParams);
+      const svgStr = generateTicketSvg(emailParams);
+      const pngB64 = await svgToPngBase64(svgStr);
+      const attachments = pngB64
+        ? [{ mime: 'image/png', filename: `MAIXPO-Ticket-${ticketId}.png`, data: pngB64 }]
+        : [{ mime: 'image/svg+xml', filename: `MAIXPO-Ticket-${ticketId}.svg`, data: btoa(unescape(encodeURIComponent(svgStr))) }];
+      try {
+        await sendGmailEmail(env, {
+          to: row.email,
+          subject: `Your MAIXPO 2026 Ticket - ${row.full_name}`,
+          html,
+          attachments,
+        });
+      } catch (emailErr) {
+        console.error('[ticket-email] send failed:', emailErr.message);
+        return json({ error: 'Email send failed', ticket_sent: false }, 500, origin);
       }
 
-      return json({ paid, amount_total: session.amount_total, currency: session.currency }, 200, origin);
+      return json({ success: true, ticket_id: ticketId, email_sent: true }, 200, origin);
     }
 
     // ── Test ticket email (protected by INTERNAL_SECRET) ──────────────────
@@ -787,23 +737,7 @@ export default {
         ).run();
 
         const registrationId = result.meta.last_row_id;
-
-        let checkout_url = null;
-        try {
-          const session = await stripeCreateCheckout(env, {
-            email: email.trim().toLowerCase(),
-            name: full_name.trim(),
-            tier: ticket_tier,
-            city,
-            registrationId,
-            amountOverride: finalAmount,
-          });
-          checkout_url = session.url;
-          await env.DB.prepare(`UPDATE registrations SET stripe_session_id=? WHERE id=?`)
-            .bind(session.id, registrationId).run();
-        } catch (stripeErr) {
-          return json({ error: 'Payment setup failed. Please email info@maixpo.com with your name to complete registration.', registration_id: registrationId }, 500, origin);
-        }
+        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${registrationId}`;
 
         return json({ success: true, id: registrationId, checkout_url }, 200, origin);
       } catch (err) {
