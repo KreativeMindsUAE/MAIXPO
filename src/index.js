@@ -273,10 +273,22 @@ function generateTicketSvg({ full_name, ticket_tier, city, ticket_id }) {
 }
 
 function generateTicketId(city) {
-  const chars = '0123456789ABCDEF';
-  let hex = '';
-  for (let i = 0; i < 8; i++) hex += chars[Math.floor(Math.random() * 16)];
-  return `MAIXPO-${city}-26${hex}`;
+  // Format: MAIXPO-{CITY}-26ABC123D1
+  //   26 = fixed year prefix
+  //   ABC = 3 random uppercase letters (24-letter alphabet, no I/O to avoid 1/l/i and 0/o confusion)
+  //   123 = 3 random digits
+  //   D = 1 random letter (same alphabet)
+  //   1 = 1 random digit
+  // Keyspace per city ~3.3B, far above conference scale, so no UNIQUE constraint today.
+  const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const DIGITS = '0123456789';
+  const pick = (s) => s[Math.floor(Math.random() * s.length)];
+  let body = '26';
+  for (let i = 0; i < 3; i++) body += pick(LETTERS);
+  for (let i = 0; i < 3; i++) body += pick(DIGITS);
+  body += pick(LETTERS);
+  body += pick(DIGITS);
+  return `MAIXPO-${city}-${body}`;
 }
 
 async function _fetchFontBuffer(weight) {
@@ -617,34 +629,61 @@ export default {
       try { payload = JSON.parse(bodyText); } catch { return json({ error: 'invalid json' }, 400, origin); }
 
       const payerEmail = String(payload?.payer_email || '').trim().toLowerCase();
-      if (!payerEmail) {
-        console.log('[payxem-webhook] no payer_email in payload', { delivery: deliveryId, invoice: payload?.invoice_number });
-        return json({ status: 'no_email' }, 200, origin);
+      const refRaw = String(payload?.ref || '').trim().toUpperCase();
+      // Accept a Payxem-forwarded ref only if it looks like one of our ticket ids
+      // (MAIXPO-...), so a stray ref from some other integration cannot collide.
+      const ref = /^MAIXPO-[A-Z]+-26[A-HJ-NP-Z]{3}\d{3}[A-HJ-NP-Z]\d$/i.test(refRaw) ? refRaw : '';
+
+      let row = null;
+      let matchedBy = null;
+
+      // 1) Preferred: match by Payxem-forwarded ref == our pre-generated ticket_id.
+      //    Immune to buyer email typos on the Payxem page.
+      if (ref) {
+        row = await env.DB.prepare(
+          `SELECT id, full_name, email, ticket_tier, city, ticket_id, ticket_emailed
+           FROM registrations WHERE ticket_id = ? LIMIT 1`
+        ).bind(ref).first();
+        if (row) matchedBy = 'ref';
       }
 
-      const row = await env.DB.prepare(
-        `SELECT id, full_name, email, ticket_tier, city, ticket_id, ticket_emailed
-         FROM registrations
-         WHERE LOWER(email) = ? AND ticket_emailed = 0
-         ORDER BY id DESC LIMIT 1`
-      ).bind(payerEmail).first();
+      // 2) Fallback: email match (backwards-compatible with webhooks that have no ref).
+      if (!row) {
+        if (!payerEmail) {
+          console.log('[payxem-webhook] no match: no ref, no payer_email', { delivery: deliveryId, invoice: payload?.invoice_number });
+          return json({ status: 'no_email' }, 200, origin);
+        }
+        row = await env.DB.prepare(
+          `SELECT id, full_name, email, ticket_tier, city, ticket_id, ticket_emailed
+           FROM registrations
+           WHERE LOWER(email) = ? AND ticket_emailed = 0
+           ORDER BY id DESC LIMIT 1`
+        ).bind(payerEmail).first();
+        if (row) matchedBy = 'email';
+      }
 
       if (!row) {
-        const already = await env.DB.prepare(
+        const already = payerEmail ? await env.DB.prepare(
           `SELECT id, ticket_id FROM registrations WHERE LOWER(email) = ? AND ticket_emailed = 1 ORDER BY id DESC LIMIT 1`
-        ).bind(payerEmail).first();
+        ).bind(payerEmail).first() : null;
         if (already) {
           console.log('[payxem-webhook] already emailed', { delivery: deliveryId, reg: already.id, ticket: already.ticket_id });
           return json({ status: 'already_sent', ticket_id: already.ticket_id }, 200, origin);
         }
-        console.log('[payxem-webhook] no match for payer', { delivery: deliveryId, email: payerEmail, invoice: payload?.invoice_number });
+        console.log('[payxem-webhook] no match', { delivery: deliveryId, ref, email: payerEmail, invoice: payload?.invoice_number });
         return json({ status: 'no_match' }, 200, origin);
+      }
+
+      // Guard the ref-matched path: if the row is already ticket_emailed=1, return idempotent.
+      if (row.ticket_emailed === 1) {
+        console.log('[payxem-webhook] already emailed via ref', { delivery: deliveryId, reg: row.id, ticket: row.ticket_id });
+        return json({ status: 'already_sent', ticket_id: row.ticket_id }, 200, origin);
       }
 
       try {
         const ticketId = await _sendTicketForRegistration(env, row);
-        console.log('[payxem-webhook] ticket sent', { delivery: deliveryId, reg: row.id, ticket: ticketId });
-        return json({ status: 'sent', ticket_id: ticketId }, 200, origin);
+        console.log('[payxem-webhook] ticket sent', { delivery: deliveryId, reg: row.id, ticket: ticketId, matched_by: matchedBy });
+        return json({ status: 'sent', ticket_id: ticketId, matched_by: matchedBy }, 200, origin);
       } catch (e) {
         // Payment is credited on Payxem; email failure must not re-fire ticket_emailed=1,
         // so roll back the flag so a retry (or admin resend) can succeed.
@@ -840,9 +879,16 @@ export default {
         ).run();
 
         const registrationId = result.meta.last_row_id;
-        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${registrationId}`;
+        // Pre-generate the ticket_id at registration time so it can serve as the
+        // stable reference carried through Payxem's paylink URL and back in the
+        // webhook. Same id becomes the final ticket id when payment lands.
+        const ticketId = generateTicketId(city);
+        try {
+          await env.DB.prepare(`UPDATE registrations SET ticket_id = ? WHERE id = ?`).bind(ticketId, registrationId).run();
+        } catch (_) { /* non-fatal: receiver still falls back to email match */ }
+        const checkout_url = `https://app.payxem.com/p/maixpo?ref=${ticketId}`;
 
-        return json({ success: true, id: registrationId, checkout_url }, 200, origin);
+        return json({ success: true, id: registrationId, ticket_id: ticketId, checkout_url }, 200, origin);
       } catch (err) {
         return json({ error: 'Registration failed, please try again' }, 500, origin);
       }
