@@ -1,5 +1,3 @@
-const API = 'https://maixpo-api.khalidgraphy-com.workers.dev';
-
 export async function onRequest(context) {
   return new Response(adminHtml(), {
     headers: { 'Content-Type': 'text/html; charset=utf-8' },
@@ -390,7 +388,7 @@ tr:hover td{background:rgba(245,242,236,0.02)}
 </div>
 
 <script>
-const API = '${API}';
+const API = '';
 let TOKEN = sessionStorage.getItem('maixpo_admin_token') || '';
 let ADMIN_EMAIL = '';
 let ACCESS_CODE = '';
