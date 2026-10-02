@@ -24,17 +24,58 @@ function json(data, status = 200, origin = '') {
 }
 
 const VALID_TIERS = ['standard', 'vip'];
-const STRIPE_PRICES = { standard: 3999, vip: 9999 }; // cents USD
+const STRIPE_PRICES = { standard: 3999, vip: 9999 }; // fallback cents USD (legacy)
 const STRIPE_NAMES = {
-  standard: 'MAIXPO 2026 — Standard Ticket (Early Bird)',
-  vip: 'MAIXPO 2026 — VIP Executive Ticket (Early Bird)',
+  standard: 'MAIXPO 2026 — Standard Ticket',
+  vip: 'MAIXPO 2026 — VIP Executive Ticket',
 };
-const TIER_LABELS = { standard: 'Standard Early Bird', vip: 'VIP Executive' };
+const TIER_LABELS = { standard: 'Standard', vip: 'VIP Executive' };
 const VALID_CITIES = ['KL', 'Dubai'];
 const VALID_INDUSTRIES = ['agency', 'brand', 'saas', 'consulting', 'media', 'other'];
 const VALID_AI_STAGES = ['not_yet', 'exploring', 'using'];
 const VALID_GOALS = ['learn', 'network', 'hire', 'vendors', 'invest'];
 const VALID_HEAR = ['social', 'colleague', 'google', 'email', 'other'];
+
+// ── Pricing Helpers ────────────────────────────────────────────────────────
+async function getTicketPrice(env, tier) {
+  if (!VALID_TIERS.includes(tier)) return STRIPE_PRICES[tier];
+
+  try {
+    const settings = await env.DB.prepare(
+      `SELECT value FROM system_settings WHERE key IN ('price_${tier}', 'price_${tier}_normal', 'early_bird_end')`
+    ).all();
+
+    const settingsMap = {};
+    settings.results?.forEach(s => {
+      settingsMap[s.key] = parseInt(s.value, 10);
+    });
+
+    const now = Math.floor(Date.now() / 1000);
+    const earlyBirdEnd = settingsMap.early_bird_end || 1793404799; // Oct 30, 2026
+
+    if (now < earlyBirdEnd) {
+      return settingsMap[`price_${tier}`] || STRIPE_PRICES[tier];
+    } else {
+      return settingsMap[`price_${tier}_normal`] || settingsMap[`price_${tier}`] || STRIPE_PRICES[tier];
+    }
+  } catch {
+    return STRIPE_PRICES[tier];
+  }
+}
+
+async function isEarlyBirdActive(env) {
+  try {
+    const row = await env.DB.prepare(
+      `SELECT value FROM system_settings WHERE key = 'early_bird_end'`
+    ).first();
+
+    const earlyBirdEnd = row ? parseInt(row.value, 10) : 1793404799;
+    const now = Math.floor(Date.now() / 1000);
+    return now < earlyBirdEnd;
+  } catch {
+    return true;
+  }
+}
 
 // ── STRIPE ────────────────────────────────────────────────────────────────────
 
@@ -665,7 +706,7 @@ export default {
         }
       }
 
-      const baseAmount = STRIPE_PRICES[tier];
+      const baseAmount = await getTicketPrice(env, tier);
       const discountAmt = Math.floor(baseAmount * row.discount_pct / 100);
       const finalAmount = baseAmount - discountAmt;
       return json({
@@ -703,7 +744,7 @@ export default {
       // Validate promo code if provided
       let appliedPromoCode = null;
       let promoDiscountPct = null;
-      let finalAmount = STRIPE_PRICES[ticket_tier];
+      let finalAmount = await getTicketPrice(env, ticket_tier);
 
       if (promo_code?.trim()) {
         const promoRow = await env.DB.prepare(
