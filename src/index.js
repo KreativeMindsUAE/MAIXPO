@@ -252,7 +252,7 @@ function generateTicketSvg({ full_name, ticket_tier, city, ticket_id }) {
   <text x="24" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">${cityLabel}</text>
   <line x1="150" y1="264" x2="150" y2="308" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
   <text x="162" y="280" font-family="Roboto,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">DATE</text>
-  <text x="162" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">OCT 28-29, 2026</text>
+  <text x="162" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">DEC 29-30, 2026</text>
   <line x1="270" y1="264" x2="270" y2="308" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
   <text x="282" y="280" font-family="Roboto,sans-serif" font-size="7" font-weight="700" letter-spacing="2" fill="rgba(0,0,0,0.4)">ADMIT</text>
   <text x="282" y="296" font-family="Roboto,sans-serif" font-size="10" font-weight="700" letter-spacing="1" fill="#111111">1 PERSON</text>
@@ -437,7 +437,7 @@ function ticketEmailHtml({ full_name, ticket_tier, city, ticket_id }) {
                   </td>
                   <td width="33%" style="border-left:1px solid rgba(245,242,236,0.07);padding:0 10px;">
                     <div style="font-size:7px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,242,236,0.38);margin-bottom:5px;">Date</div>
-                    <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#f5f2ec;">Sep 2026</div>
+                    <div style="font-size:10px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:#f5f2ec;">Dec 2026</div>
                   </td>
                   <td width="33%" style="border-left:1px solid rgba(245,242,236,0.07);padding-left:10px;">
                     <div style="font-size:7px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,242,236,0.38);margin-bottom:5px;">Admission</div>
