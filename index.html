@@ -144,10 +144,10 @@
     },
     {
       "@type": "Question",
-      "name": "What is the difference between the KL and Dubai editions of MAIXPO?",
+      "name": "Is there more than one MAIXPO event?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "KL on December 29-30 is focused on the Southeast Asia marketing community. Dubai (date TBA) is adapted for the GCC market. Same two-day format and practical approach, with different local context and speaker lineup. Sponsors and exhibitors can book one or both cities."
+        "text": "Yes. MAIXPO 2026 takes place in Kuala Lumpur on December 29-30, 2026. A second MAIXPO, the AI and Marketing Conference & Expo for the Balkan region, takes place in Tirana, Albania, in the last week of March 2027. Visit maixpo.com/albania for the Albania event details."
       }
     },
     {
@@ -155,7 +155,7 @@
       "name": "What language is MAIXPO 2026 held in?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "All sessions, workshops, and materials are in English. MAIXPO is designed as a regional international event welcoming attendees from across Southeast Asia, the GCC, and South Asia."
+        "text": "All sessions, workshops, and materials are in English. MAIXPO is designed as a regional international event welcoming attendees from across Southeast Asia, the Balkans, and South Asia."
       }
     },
     {
@@ -163,7 +163,7 @@
       "name": "Can my company sponsor or exhibit at MAIXPO 2026?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Sponsorship packages start from USD 3,000 and exhibitor booths from USD 999. A Series Partner package locks in KL now with priority terms for the Dubai edition when confirmed. Email sponsors@maixpo.com for a full prospectus."
+        "text": "Yes. Sponsorship packages start from USD 5,000 and exhibitor booths from USD 999. A Series Partner package locks in KL now with priority terms for the Tirana edition when confirmed. Email sponsors@maixpo.com for a full prospectus."
       }
     },
     {
@@ -605,6 +605,30 @@
   .sponsor-benefits li::before { content: 'v'; color: var(--accent); flex-shrink: 0; }
 
   /* VENUE */
+  .zones { border-top: 1px solid var(--border); }
+  .journey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 60px; }
+  .journey-step { background: var(--mid); padding: 32px 28px; position: relative; }
+  .journey-step::after { content: '\2192'; position: absolute; right: -2px; top: 50%; transform: translate(50%, -50%); width: 22px; height: 22px; background: var(--accent); color: var(--black); font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .journey-step:last-child::after { display: none; }
+  .journey-num { font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 3px; color: var(--accent); margin-bottom: 10px; }
+  .journey-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+  .journey-text { font-size: 14px; line-height: 1.6; color: var(--text-muted); }
+  .zone-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 2px; }
+  .zone-card { background: var(--black); padding: 36px 32px; border-top: 3px solid var(--zone, var(--accent)); }
+  .zone-tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--zone, var(--accent)); margin-bottom: 14px; }
+  .zone-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+  .zone-text { font-size: 15px; line-height: 1.7; color: var(--text-muted); }
+  .zone-note { margin-top: 24px; font-size: 13px; color: var(--text-muted); }
+  @media (max-width: 900px) {
+    .journey { grid-template-columns: repeat(2, 1fr); }
+    .journey-step::after { display: none; }
+    .zone-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .journey { grid-template-columns: 1fr; }
+    .zone-grid { grid-template-columns: 1fr; }
+  }
+
   .venue { background: var(--mid); border-top: 1px solid var(--border); }
   .venue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-top: 60px; align-items: start; }
   .venue-map { background: #111; height: 300px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); position: relative; overflow: hidden; }
@@ -896,21 +920,21 @@
     <span class="ticker-item"><span class="ticker-dot"></span> AI Marketing</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Kuala Lumpur</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Generative AI</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Dubai</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Albania</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Marketing Automation</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Southeast Asia</span>
     <span class="ticker-item"><span class="ticker-dot"></span> AI Strategy</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Middle East</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Balkans</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Content AI</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Paid Media &amp; AI</span>
     <span class="ticker-item"><span class="ticker-dot"></span> AI Marketing</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Kuala Lumpur</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Generative AI</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Dubai</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Albania</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Marketing Automation</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Southeast Asia</span>
     <span class="ticker-item"><span class="ticker-dot"></span> AI Strategy</span>
-    <span class="ticker-item"><span class="ticker-dot"></span> Middle East</span>
+    <span class="ticker-item"><span class="ticker-dot"></span> Balkans</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Content AI</span>
     <span class="ticker-item"><span class="ticker-dot"></span> Paid Media &amp; AI</span>
   </div>
@@ -960,25 +984,26 @@
     <div class="city-card coming-soon">
       <div class="city-num">02</div>
       <div class="city-status tba">Dates Announcing Soon</div>
-      <div class="city-name">Dubai</div>
-      <div class="city-country">UAE &mdash; Middle East &amp; GCC</div>
-      <div class="city-date">Date TBA</div>
-      <div class="city-date-note">To be announced soon &mdash; the flagship edition</div>
+      <div class="city-name">Tirana</div>
+      <div class="city-country">Albania, Balkan region</div>
+      <div class="city-date">Last week of March 2027</div>
+      <div class="city-date-note">Exact days and venue to be confirmed</div>
       <div class="city-desc">
-        The flagship. Dubai brings richer sponsor budgets, a premium venue, and the GCC's most senior marketing community. Every lesson from KL applied. Series sponsors get both cities in one deal &mdash; the most efficient buy in regional marketing.
+        The AI and Marketing Conference &amp; Expo for the Balkan region. A focused edition for Albania and neighbouring markets. <a href="/albania/" style="color:var(--accent)">See the full Albania event page</a>.
       </div>
       <div class="city-facts">
         <div>
           <div class="city-fact-label">Format</div>
-          <div class="city-fact-val">Hybrid (Physical + Virtual)</div>
+          <div class="city-fact-val">To be confirmed</div>
         </div>
         <div>
           <div class="city-fact-label">Audience</div>
-          <div class="city-fact-val">GCC, MENA &amp; South Asia</div>
+          <div class="city-fact-val">Albania &amp; the Balkans</div>
         </div>
       </div>
     </div>
   </div>
+<p class="cities-note" style="margin-top:32px; font-size:14px; color:var(--text-muted);">Dubai is on hold for now. Tirana, Albania is our next MAIXPO after Kuala Lumpur.</p>
 </section>
 
 <!-- ABOUT -->
@@ -1084,7 +1109,7 @@
 
   <div class="agenda-days">
     <div>
-      <div class="agenda-day-title">Day 01 &mdash; 28 October 2026, Kuala Lumpur</div>
+      <div class="agenda-day-title">Day 01 &mdash; 29 December 2026, Kuala Lumpur</div>
 
       <div class="agenda-item">
         <div class="agenda-time">08:30</div>
@@ -1153,7 +1178,7 @@
     </div>
 
     <div>
-      <div class="agenda-day-title">Day 02 &mdash; 29 October 2026, Kuala Lumpur</div>
+      <div class="agenda-day-title">Day 02 &mdash; 30 December 2026, Kuala Lumpur</div>
 
       <div class="agenda-item">
         <div class="agenda-time">09:00</div>
@@ -1222,15 +1247,75 @@
     </div>
   </div>
 
-  <div class="agenda-dubai-note">
-    <div class="agenda-dubai-icon">DUBAI TBA</div>
-    <div class="agenda-dubai-text">
-      <strong>Dubai edition follows the same two-day format (date TBA),</strong> adapted for the GCC audience with locally relevant speakers, a Dubai-focused business context, and the same practical, tactics-first approach. Dubai programme details will be announced after the KL edition.
-    </div>
-  </div>
 </section>
 
 <!-- SPEAKERS -->
+<!-- ZONES + JOURNEY -->
+<section class="zones" id="zones">
+  <div class="section-label">Inside MAIXPO</div>
+  <h2 class="section-title">
+    Everything in<br>
+    <span class="accent">one building.</span>
+  </h2>
+
+  <div class="journey">
+    <div class="journey-step">
+      <div class="journey-num">01</div>
+      <div class="journey-name">Arrive</div>
+      <div class="journey-text">Pick up your badge, walk the expo floor, and get your bearings.</div>
+    </div>
+    <div class="journey-step">
+      <div class="journey-num">02</div>
+      <div class="journey-name">Learn</div>
+      <div class="journey-text">Keynotes, panels and parallel workshop tracks across both days.</div>
+    </div>
+    <div class="journey-step">
+      <div class="journey-num">03</div>
+      <div class="journey-name">Connect</div>
+      <div class="journey-text">Networking, business matching and time with speakers and exhibitors.</div>
+    </div>
+    <div class="journey-step">
+      <div class="journey-num">04</div>
+      <div class="journey-name">Build</div>
+      <div class="journey-text">Take a working AI playbook back to your team.</div>
+    </div>
+  </div>
+
+  <div class="zone-grid" style="margin-top:60px;">
+    <div class="zone-card" style="--zone:#E8FF00;">
+      <div class="zone-tag">Main Stage</div>
+      <div class="zone-name">Keynotes and panels</div>
+      <div class="zone-text">The opening session, keynote talks and the CMO panel. Every ticket includes full access to both days.</div>
+    </div>
+    <div class="zone-card" style="--zone:#7CF0FF;">
+      <div class="zone-tag">Expo Floor</div>
+      <div class="zone-name">50+ exhibitors</div>
+      <div class="zone-text">AI tools, platforms and martech on show, with live demos through the day.</div>
+    </div>
+    <div class="zone-card" style="--zone:#FF8FD8;">
+      <div class="zone-tag">Workshop Rooms</div>
+      <div class="zone-name">Four parallel tracks</div>
+      <div class="zone-text">Hands-on sessions running in parallel. Bring a laptop and build alongside the speaker.</div>
+    </div>
+    <div class="zone-card" style="--zone:#B7A6FF;">
+      <div class="zone-tag">Networking</div>
+      <div class="zone-name">Open networking</div>
+      <div class="zone-text">Standard networking is included with every ticket, with coffee and lunch served on both days.</div>
+    </div>
+    <div class="zone-card" style="--zone:#E8FF00;">
+      <div class="zone-tag">VIP Lounge</div>
+      <div class="zone-name">Priority access</div>
+      <div class="zone-text">Priority seating, a private networking lounge and speaker meet-and-greet access.</div>
+    </div>
+    <div class="zone-card" style="--zone:#F5F2EC;">
+      <div class="zone-tag">Registration</div>
+      <div class="zone-name">Badge pickup</div>
+      <div class="zone-text">Check in, collect your badge and pick up your ticket details. Arrive early on day one.</div>
+    </div>
+  </div>
+  <p class="zone-note">The floor layout above is indicative. The final floor plan will be published before the event.</p>
+</section>
+
 <section class="speakers" id="speakers">
   <div class="section-label">Speakers</div>
   <h2 class="section-title">
@@ -1312,7 +1397,6 @@
 
   <div class="tickets-city-toggle">
     <button class="toggle-btn active" onclick="showCity('kl', this)">KL &mdash; Dec 29-30</button>
-    <button class="toggle-btn" onclick="showCity('dubai', this)">Dubai &mdash; TBA</button>
   </div>
 
   <div id="tickets-kl">
@@ -1368,19 +1452,6 @@
     </p>
   </div>
 
-  <div id="tickets-dubai" style="display:none;">
-    <div class="tickets-grid">
-      <div class="ticket-dubai-coming">
-        <h3>Dubai Tickets Open Soon</h3>
-        <p>Dubai edition ticket sales open closer to the November date.<br>
-        Register for KL first &mdash; KL attendees get priority Dubai early bird access.</p>
-        <div style="margin-top:28px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-          <a href="#tickets" onclick="showCity('kl', document.querySelector('.toggle-btn'))" class="btn-primary" style="font-size:13px; padding:14px 28px;">Get KL Ticket First</a>
-          <a href="mailto:info@maixpo.com" class="btn-secondary" style="font-size:13px; padding:14px 28px;">Notify Me &mdash; Dubai</a>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- EXHIBITORS -->
@@ -1445,8 +1516,8 @@
 
   <div class="series-note">
     <div class="series-note-text">
-      <strong>Interested in Dubai?</strong> Dubai exhibitor packages will be available once dates are confirmed.
-      Contact <a href="mailto:exhibit@maixpo.com">exhibit@maixpo.com</a> to register your interest and get priority placement when Dubai opens.
+      <strong>Interested in Albania?</strong> Exhibitor packages for Tirana will be confirmed once the venue and dates are set.
+      Contact <a href="mailto:exhibit@maixpo.com">exhibit@maixpo.com</a> to register your interest and get priority placement when Albania opens.
     </div>
   </div>
 </section>
@@ -1463,8 +1534,8 @@
     <div>
       <div class="series-partner-tag"><svg class="svg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.7 8.3H23l-7 5.1 2.7 8.3L12 18.7l-6.7 5 2.7-8.3-7-5.1h8.3z"/></svg> Premium &mdash; Highest Value</div>
       <div class="series-partner-title">Series Partner</div>
-      <div class="series-partner-price">~$20,000</div>
-      <div class="series-partner-desc">Secure KL now and lock in priority access for Dubai when dates confirm. The most efficient regional buy for AI tools and martech companies who want to reach the full Southeast Asia and GCC audience in 2026. Priced at a premium above two single-city Platinums.</div>
+      <div class="series-partner-price">$35,000</div>
+      <div class="series-partner-desc">Secure KL now and lock in priority access for Tirana when dates confirm. The most efficient regional buy for AI tools and martech companies who want to reach Southeast Asia and Balkan markets. Priced at a premium above a single-city Platinum.</div>
     </div>
     <div>
       <ul class="series-partner-perks">
@@ -1475,7 +1546,7 @@
         <li>20 event tickets</li>
         <li>Dedicated email blast to full attendee list</li>
         <li>Post-event lead report</li>
-        <li>Priority placement + Platinum terms at Dubai (when confirmed)</li>
+        <li>Priority placement + Platinum terms at Tirana (when confirmed)</li>
       </ul>
       <a href="mailto:sponsors@maixpo.com" class="ticket-btn ticket-btn-white" style="margin-top:24px;display:block;text-align:center;">Enquire &mdash; Series Partner</a>
     </div>
@@ -1485,8 +1556,8 @@
 
     <div class="sponsor-tier">
       <div class="sponsor-tier-name tier-bronze">Bronze</div>
-      <div class="sponsor-price">$3,000</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 12,000</div>
+      <div class="sponsor-price">$5,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 20,000</div>
       <ul class="sponsor-benefits">
         <li>Logo on all event materials</li>
         <li>Social media announcement</li>
@@ -1499,8 +1570,8 @@
 
     <div class="sponsor-tier">
       <div class="sponsor-tier-name tier-silver">Silver</div>
-      <div class="sponsor-price">$5,000</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 20,000</div>
+      <div class="sponsor-price">$8,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 32,000</div>
       <ul class="sponsor-benefits">
         <li>Everything in Bronze</li>
         <li>Stage mention both days</li>
@@ -1514,8 +1585,8 @@
 
     <div class="sponsor-tier" style="border:1px solid rgba(255,215,0,0.3);">
       <div class="sponsor-tier-name tier-gold">Gold</div>
-      <div class="sponsor-price">$8,000</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 32,000</div>
+      <div class="sponsor-price">$12,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 48,000</div>
       <ul class="sponsor-benefits">
         <li>Everything in Silver</li>
         <li>15-minute speaking slot</li>
@@ -1530,8 +1601,8 @@
 
     <div class="sponsor-tier" style="border:1px solid rgba(232,232,232,0.2);">
       <div class="sponsor-tier-name tier-platinum">Platinum</div>
-      <div class="sponsor-price">$12,000</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 48,000</div>
+      <div class="sponsor-price">$20,000</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;">Per city &middot; RM 80,000</div>
       <ul class="sponsor-benefits">
         <li>Everything in Gold</li>
         <li>Title sponsor &mdash; co-branding</li>
@@ -1589,11 +1660,11 @@
   </div>
 
   <div class="venue-dubai-teaser">
-    <div class="venue-dubai-flag">DUBAI</div>
+    <div class="venue-dubai-flag">ALBANIA</div>
     <div class="venue-dubai-info">
-      <h4>Dubai, UAE &mdash; Date TBA</h4>
+      <h4>Tirana, Albania: last week of March 2027</h4>
       <p>
-        The flagship edition. Dubai brings the GCC's most senior marketing community, premium venue infrastructure, and a richer sponsor landscape. Venue and exact dates will be announced once confirmed. Register interest at <a href="mailto:info@maixpo.com" style="color:var(--accent)">info@maixpo.com</a>.
+        The next MAIXPO after Kuala Lumpur: the AI and Marketing Conference &amp; Expo for the Balkan region. Venue and exact days to be confirmed. <a href="/albania/" style="color:var(--accent)">View the Albania event page</a>.
       </p>
     </div>
   </div>
@@ -1613,24 +1684,24 @@
       <div class="faq-a">Marketing managers, CMOs, digital leads, agency founders, brand strategists, ecommerce managers, and entrepreneurs who are serious about using AI to grow. If you're responsible for marketing results, MAIXPO is for you.</div>
     </div>
     <div class="faq-item">
-      <div class="faq-q">What's the difference between KL and Dubai editions?</div>
-      <div class="faq-a">KL on December 29-30 is focused on the SEA marketing community. Dubai (date TBA) is adapted for the GCC. Same format, same practical approach, different local context and speaker lineup. Sponsors and exhibitors can book one or both cities.</div>
+      <div class="faq-q">Is there more than one MAIXPO event?</div>
+      <div class="faq-a">Yes. MAIXPO 2026 takes place in Kuala Lumpur on December 29-30, 2026. A second MAIXPO, the AI and Marketing Conference &amp; Expo for the Balkan region, takes place in Tirana, Albania, in the last week of March 2027. <a href="/albania/">See the Albania event page</a>.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">Do I need a technical background to attend?</div>
       <div class="faq-a">Not at all. MAIXPO is built for marketing practitioners, not engineers. Every session is designed for people who run campaigns, manage brands, and drive growth &mdash; no coding required.</div>
     </div>
     <div class="faq-item">
-      <div class="faq-q">Will there be a Dubai edition?</div>
-      <div class="faq-a">Yes &mdash; Dubai is confirmed and dates will be announced soon. Register for KL first and you'll get priority access and an exclusive early bird discount when Dubai tickets open. Stay tuned at <a href="mailto:info@maixpo.com">info@maixpo.com</a>.</div>
+      <div class="faq-q">Is there a Dubai edition?</div>
+      <div class="faq-a">Dubai is on hold for now and is not on the current calendar. Tirana, Albania is the next edition, in the last week of March 2027.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">What language is the event in?</div>
-      <div class="faq-a">All sessions, workshops, and materials are in English. MAIXPO is designed as a regional international event welcoming attendees from across Southeast Asia, the GCC, and South Asia.</div>
+      <div class="faq-a">All sessions, workshops, and materials are in English. MAIXPO is designed as a regional international event welcoming attendees from across Southeast Asia, the Balkans, and South Asia.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">Can my company sponsor or exhibit?</div>
-      <div class="faq-a">Yes. Sponsorship packages start from $3,000 and exhibitor booths from $999. A Series Partner package locks in KL now with priority terms for Dubai when confirmed. Email <a href="mailto:sponsors@maixpo.com">sponsors@maixpo.com</a> for a full prospectus.</div>
+      <div class="faq-a">Yes. Sponsorship packages start from $5,000 and exhibitor booths from $999. A Series Partner package locks in KL now with priority terms for Tirana when confirmed. Email <a href="mailto:sponsors@maixpo.com">sponsors@maixpo.com</a> for a full prospectus.</div>
     </div>
     <div class="faq-item">
       <div class="faq-q">What is the refund policy?</div>
@@ -1686,7 +1757,7 @@
   <div class="footer-top">
     <div>
       <img src="img/logo1.png" alt="MAIXPO" class="footer-logo-img">
-      <div class="footer-tagline">AI Marketing Conference &amp; Expo. Kuala Lumpur, Malaysia &mdash; December 29-30, 2026. Dubai edition coming soon.</div>
+      <div class="footer-tagline">AI Marketing Conference &amp; Expo. Kuala Lumpur, Malaysia &mdash; December 29-30, 2026. Next edition: Tirana, Albania, last week of March 2027.</div>
       <div class="footer-social">
         <a href="#" class="social-link">in</a>
         <a href="#" class="social-link" aria-label="X (Twitter)"><svg class="svg-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
@@ -1698,7 +1769,7 @@
       <h4>Attend</h4>
       <ul>
         <li><a href="#tickets">KL Tickets</a></li>
-        <li><a href="mailto:info@maixpo.com">Dubai &mdash; Notify Me</a></li>
+        <li><a href="/albania/">Albania Event</a></li>
         <li><a href="#speakers">Speakers</a></li>
         <li><a href="#agenda">Programme</a></li>
         <li><a href="mailto:info@maixpo.com">Group Bookings</a></li>
@@ -1865,7 +1936,6 @@
 <script>
 function showCity(city, btn) {
   document.getElementById('tickets-kl').style.display = city === 'kl' ? 'block' : 'none';
-  document.getElementById('tickets-dubai').style.display = city === 'dubai' ? 'block' : 'none';
   document.querySelectorAll('.toggle-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
 }

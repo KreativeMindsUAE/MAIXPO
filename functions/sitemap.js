@@ -29,6 +29,12 @@ export async function onRequest(context) {
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://maixpo.com/albania/</loc>
+    <lastmod>2026-10-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://maixpo.com/insights</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
